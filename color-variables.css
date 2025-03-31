@@ -1,0 +1,127 @@
+/* Theme Variables with improved dark mode contrast */
+:root {
+  /* Light Theme Colors (unchanged) */
+  --cc-light-bg-primary: #ffffff;
+  --cc-light-bg-secondary: #f6f8fa;
+  --cc-light-border: #d0d7de;
+  --cc-light-text-primary: #24292f;
+  --cc-light-text-secondary: #57606a;
+
+  --cc-light-label-bg: #e1e4e8;
+  --cc-light-label-border: #d0d7de;
+  --cc-light-label-text: #24292f;
+  --cc-light-decoration-bg: #ddf4ff;
+  --cc-light-decoration-border: #a5d6ff;
+  --cc-light-decoration-text: #0969da;
+
+  --cc-light-decoration-active-bg: #0969da;
+  --cc-light-decoration-active-text: #ffffff;
+  --cc-light-hover-bg: #f3f4f6;
+  --cc-light-hover-border: #afb8c1;
+
+  --cc-light-floating-bg: #0969da;
+  --cc-light-floating-text: #ffffff;
+  --cc-light-floating-hover: #0550ae;
+
+  /* Dark Theme Colors - SIGNIFICANTLY IMPROVED CONTRAST */
+  --cc-dark-bg-primary: #0d1117;
+  --cc-dark-bg-secondary: #161b22;
+  --cc-dark-border: #30363d;
+  --cc-dark-text-primary: #ffffff; /* Pure white for maximum contrast */
+  --cc-dark-text-secondary: #c9d1d9; /* Lightened for better readability */
+
+  /* Label and Decoration Colors - Dark - IMPROVED CONTRAST */
+  --cc-dark-label-bg: #2d333b; /* Distinct background */
+  --cc-dark-label-border: #768390; /* More visible border */
+  --cc-dark-label-text: #ffffff; /* Pure white text for maximum contrast */
+
+  --cc-dark-decoration-bg: #1a3356; /* More saturated blue background */
+  --cc-dark-decoration-border: #559af0; /* Brighter blue border */
+  --cc-dark-decoration-text: #a5d6ff; /* Brighter text */
+
+  /* Active States - Dark - IMPROVED CONTRAST */
+  --cc-dark-decoration-active-bg: #2f81f7; /* Bright blue */
+  --cc-dark-decoration-active-text: #ffffff; /* White text on active */
+  --cc-dark-hover-bg: #2d333b;
+  --cc-dark-hover-border: #adbac7; /* Very visible border on hover */
+
+  /* Floating Button - Dark */
+  --cc-dark-floating-bg: #2f81f7;
+  --cc-dark-floating-text: #ffffff;
+  --cc-dark-floating-hover: #58a6ff;
+
+  /* Default to light theme (unchanged) */
+  --cc-bg-primary: var(--cc-light-bg-primary);
+  --cc-bg-secondary: var(--cc-light-bg-secondary);
+  --cc-border: var(--cc-light-border);
+  --cc-text-primary: var(--cc-light-text-primary);
+  --cc-text-secondary: var(--cc-light-text-secondary);
+
+  --cc-label-bg: var(--cc-light-label-bg);
+  --cc-label-border: var(--cc-light-label-border);
+  --cc-label-text: var(--cc-light-label-text);
+  --cc-decoration-bg: var(--cc-light-decoration-bg);
+  --cc-decoration-border: var(--cc-light-decoration-border);
+  --cc-decoration-text: var(--cc-light-decoration-text);
+
+  --cc-decoration-active-bg: var(--cc-light-decoration-active-bg);
+  --cc-decoration-active-text: var(--cc-light-decoration-active-text);
+  --cc-hover-bg: var(--cc-light-hover-bg);
+  --cc-hover-border: var(--cc-light-hover-border);
+
+  --cc-floating-bg: var(--cc-light-floating-bg);
+  --cc-floating-text: var(--cc-light-floating-text);
+  --cc-floating-hover: var(--cc-light-floating-hover);
+}
+
+/* Dark Theme */
+html[data-theme="dark"] {
+  --cc-bg-primary: var(--cc-dark-bg-primary);
+  --cc-bg-secondary: var(--cc-dark-bg-secondary);
+  --cc-border: var(--cc-dark-border);
+  --cc-text-primary: var(--cc-dark-text-primary);
+  --cc-text-secondary: var(--cc-dark-text-secondary);
+
+  --cc-label-bg: var(--cc-dark-label-bg);
+  --cc-label-border: var(--cc-dark-label-border);
+  --cc-label-text: var(--cc-dark-label-text);
+  --cc-decoration-bg: var(--cc-dark-decoration-bg);
+  --cc-decoration-border: var(--cc-dark-decoration-border);
+  --cc-decoration-text: var(--cc-dark-decoration-text);
+
+  --cc-decoration-active-bg: var(--cc-dark-decoration-active-bg);
+  --cc-decoration-active-text: var(--cc-dark-decoration-active-text);
+  --cc-hover-bg: var(--cc-dark-hover-bg);
+  --cc-hover-border: var(--cc-dark-hover-border);
+
+  --cc-floating-bg: var(--cc-dark-floating-bg);
+  --cc-floating-text: var(--cc-dark-floating-text);
+  --cc-floating-hover: var(--cc-dark-floating-hover);
+}
+
+/* Auto-detect system theme preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cc-bg-primary: var(--cc-dark-bg-primary);
+    --cc-bg-secondary: var(--cc-dark-bg-secondary);
+    --cc-border: var(--cc-dark-border);
+    --cc-text-primary: var(--cc-dark-text-primary);
+    --cc-text-secondary: var(--cc-dark-text-secondary);
+
+    --cc-label-bg: var(--cc-dark-label-bg);
+    --cc-label-border: var(--cc-dark-label-border);
+    --cc-label-text: var(--cc-dark-label-text);
+    --cc-decoration-bg: var(--cc-dark-decoration-bg);
+    --cc-decoration-border: var(--cc-dark-decoration-border);
+    --cc-decoration-text: var(--cc-dark-decoration-text);
+
+    --cc-decoration-active-bg: var(--cc-dark-decoration-active-bg);
+    --cc-decoration-active-text: var(--cc-dark-decoration-active-text);
+    --cc-hover-bg: var(--cc-dark-hover-bg);
+    --cc-hover-border: var(--cc-dark-hover-border);
+
+    --cc-floating-bg: var(--cc-dark-floating-bg);
+    --cc-floating-text: var(--cc-dark-floating-text);
+    --cc-floating-hover: var(--cc-dark-floating-hover);
+  }
+}

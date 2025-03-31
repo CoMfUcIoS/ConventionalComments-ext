@@ -1,0 +1,755 @@
+/* Import theme variables */
+@import "color-variables.css";
+
+/* Panel styling */
+#conventional-comments-panel {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: var(--cc-bg-primary);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.2s;
+}
+
+#conventional-comments-panel:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+}
+
+/* Panel header */
+#conventional-comments-panel > div:first-child {
+  background-color: var(--cc-bg-secondary);
+  border-bottom: 1px solid var(--cc-border);
+}
+
+/* Status text */
+#cc-status-text {
+  color: var(--cc-text-secondary);
+}
+
+/* Button styles */
+.cc-label-btn {
+  background-color: var(--cc-label-bg);
+  border: 1px solid var(--cc-label-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  color: var(--cc-label-text);
+  font-weight: 500;
+}
+
+.cc-label-btn:hover {
+  background-color: var(--cc-hover-bg);
+  border-color: var(--cc-hover-border);
+}
+
+.cc-decoration-btn {
+  background-color: var(--cc-decoration-bg);
+  border: 1px solid var(--cc-decoration-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  color: var(--cc-decoration-text);
+  font-weight: 500;
+}
+
+.cc-decoration-btn:hover {
+  background-color: var(--cc-hover-bg);
+  border-color: var(--cc-hover-border);
+}
+
+.cc-decoration-btn.active {
+  background-color: var(--cc-decoration-active-bg);
+  color: var(--cc-decoration-active-text);
+  border-color: var(--cc-decoration-active-bg);
+  font-weight: 600;
+}
+
+/* Floating button */
+.conventional-comments-floating-button {
+  background-color: var(--cc-floating-bg);
+  color: var(--cc-floating-text);
+  transition: all 0.2s ease;
+}
+
+.conventional-comments-floating-button:hover {
+  background-color: var(--cc-floating-hover);
+  transform: scale(1.05);
+}
+
+.conventional-comments-floating-button:active {
+  transform: scale(0.95);
+}
+
+/* Control buttons */
+#conventional-comments-panel button[title="Help"],
+#conventional-comments-panel button[title="Collapse"],
+#conventional-comments-panel button[title="Expand"],
+#conventional-comments-panel button[title="Hide Panel"] {
+  color: var(--cc-text-secondary);
+}
+
+#conventional-comments-panel button[title="Help"]:hover,
+#conventional-comments-panel button[title="Collapse"]:hover,
+#conventional-comments-panel button[title="Expand"]:hover,
+#conventional-comments-panel button[title="Hide Panel"]:hover {
+  color: var(--cc-text-primary);
+}
+
+/* Help dialog */
+#cc-help-dialog {
+  animation: cc-dialog-fade-in 0.2s ease;
+  background-color: var(--cc-bg-primary);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border);
+}
+
+#cc-help-dialog h2,
+#cc-help-dialog h3 {
+  color: var(--cc-text-primary);
+}
+
+/* Fixed header for help dialog */
+#cc-help-dialog .panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--cc-bg-secondary);
+  border-bottom: 1px solid var(--cc-border);
+}
+
+/* Fix for tabs to be sticky too */
+#cc-help-dialog > div:nth-child(3) {
+  position: sticky;
+  top: 53px; /* Height of the header + padding */
+  z-index: 9;
+  background-color: var(--cc-bg-primary);
+  border-bottom: 1px solid var(--cc-border);
+}
+
+/* Make theme switcher stay with header */
+#cc-help-dialog > div:nth-child(2) {
+  position: sticky;
+  top: 53px;
+  background-color: var(--cc-bg-primary);
+  z-index: 9;
+  padding-top: 8px;
+}
+
+/* Adjust tab position when theme switcher is present */
+#cc-help-dialog > div:nth-child(3) {
+  top: 94px; /* Adjusted to account for theme switcher */
+}
+
+#cc-help-dialog button {
+  color: var(--cc-text-secondary);
+}
+
+#cc-help-dialog button:hover {
+  color: var(--cc-text-primary);
+}
+
+@keyframes cc-dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+#cc-help-dialog a {
+  color: var(--cc-decoration-text);
+  text-decoration: none;
+}
+
+#cc-help-dialog a:hover {
+  text-decoration: underline;
+}
+
+/* Tab system */
+#cc-help-dialog [data-tab-id] {
+  color: var(--cc-text-secondary);
+}
+
+#cc-help-dialog [data-tab-id]:hover {
+  color: var(--cc-text-primary);
+}
+
+#cc-help-dialog [data-tab-id][style*="color"] {
+  color: var(--cc-decoration-text) !important;
+  border-bottom-color: var(--cc-decoration-text) !important;
+}
+
+/* Examples in help dialog */
+#cc-help-dialog
+  [data-tab-content="examples"]
+  div[style*="border: 1px solid #d0d7de"] {
+  border: 1px solid var(--cc-border) !important;
+  background-color: var(--cc-bg-primary) !important;
+}
+
+#cc-help-dialog
+  [data-tab-content="examples"]
+  div[style*="background-color: #f6f8fa"] {
+  background-color: var(--cc-bg-secondary) !important;
+  border-bottom: 1px solid var(--cc-border) !important;
+  color: var(--cc-text-primary) !important;
+}
+
+#cc-help-dialog [data-tab-content="examples"] pre {
+  color: var(--cc-text-primary) !important;
+  background-color: var(--cc-bg-secondary) !important;
+}
+
+#cc-help-dialog [data-tab-content="examples"] button {
+  background-color: var(--cc-bg-secondary) !important;
+  border: 1px solid var(--cc-border) !important;
+  color: var(--cc-text-primary) !important;
+}
+
+#cc-help-dialog
+  [data-tab-content="examples"]
+  div[style*="border-left: 4px solid #0969da"] {
+  border-left: 4px solid var(--cc-decoration-text) !important;
+  background-color: var(--cc-bg-secondary) !important;
+}
+
+#cc-help-dialog
+  [data-tab-content="guide"]
+  div[style*="background-color: #f6f8fa"] {
+  background-color: var(--cc-bg-secondary) !important;
+  color: var(--cc-text-primary) !important;
+}
+
+/* Theme toggle button */
+.cc-theme-toggle {
+  background-color: var(--cc-bg-secondary);
+  color: var(--cc-text-secondary);
+  border: 1px solid var(--cc-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cc-theme-toggle:hover {
+  background-color: var(--cc-hover-bg);
+  color: var(--cc-text-primary);
+}
+
+.cc-theme-toggle svg {
+  margin-right: 4px;
+}
+
+/* Theme indicator on the floating button */
+.cc-theme-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--cc-floating-bg);
+  transition: background-color 0.3s ease;
+}
+
+/* Animation for theme change */
+.cc-theme-transition {
+  animation: cc-theme-flash 0.5s ease;
+}
+
+@keyframes cc-theme-flash {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Label and decoration badges in help dialog */
+#cc-help-dialog
+  [data-tab-content="guide"]
+  span[style*="background-color: #e1e4e8"] {
+  background-color: var(--cc-label-bg) !important;
+  color: var(--cc-label-text) !important;
+  font-weight: 600 !important;
+}
+
+#cc-help-dialog
+  [data-tab-content="guide"]
+  span[style*="background-color: #ddf4ff"] {
+  background-color: var(--cc-decoration-bg) !important;
+  color: var(--cc-decoration-text) !important;
+  font-weight: 600 !important;
+}
+
+/* Decoration button active state - ensure high contrast */
+.cc-decoration-btn.active {
+  background-color: var(--cc-decoration-active-bg) !important;
+  color: var(--cc-decoration-active-text) !important;
+  border-color: var(--cc-decoration-active-bg) !important;
+  font-weight: 600;
+}
+
+/* Theme toggle active state */
+html[data-theme="dark"] .cc-theme-toggle[data-theme="dark"],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-theme-toggle[data-theme="system"] {
+    background-color: var(--cc-dark-decoration-active-bg) !important;
+    color: var(--cc-dark-decoration-active-text) !important;
+    border-color: var(--cc-dark-decoration-active-bg) !important;
+    font-weight: 600;
+  }
+}
+
+html[data-theme="light"] .cc-theme-toggle[data-theme="light"],
+:root:not([data-theme="dark"]) .cc-theme-toggle[data-theme="system"] {
+  background-color: var(--cc-light-decoration-active-bg) !important;
+  color: var(--cc-light-decoration-active-text) !important;
+  border-color: var(--cc-light-decoration-active-bg) !important;
+  font-weight: 600;
+}
+
+/* Focus states for buttons */
+.cc-label-btn:focus,
+.cc-decoration-btn:focus,
+.cc-theme-toggle:focus {
+  outline: 2px solid var(--cc-decoration-text);
+  outline-offset: 1px;
+}
+
+/* Additional dark mode fixes for content elements */
+html[data-theme="dark"] #cc-help-dialog ul li,
+html[data-theme="dark"] #cc-help-dialog ol li,
+html[data-theme="dark"] #cc-help-dialog p,
+html[data-theme="dark"] #cc-help-dialog div,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #cc-help-dialog ul li,
+  :root:not([data-theme="light"]) #cc-help-dialog ol li,
+  :root:not([data-theme="light"]) #cc-help-dialog p,
+  :root:not([data-theme="light"]) #cc-help-dialog div {
+    color: var(--cc-text-primary);
+  }
+}
+
+/* Ensure stronger contrast for monospace content in dark mode */
+html[data-theme="dark"] code,
+html[data-theme="dark"] pre,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) code,
+  :root:not([data-theme="light"]) pre {
+    color: var(--cc-text-primary) !important;
+    background-color: var(--cc-bg-secondary) !important;
+  }
+}
+
+/* Ensure the format section in the guide tab has proper colors */
+html[data-theme="dark"]
+  #cc-help-dialog
+  [data-tab-content="guide"]
+  div[style*="background-color"],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="guide"]
+    div[style*="background-color"] {
+    background-color: var(--cc-bg-secondary) !important;
+    color: var(--cc-text-primary) !important;
+    border: 1px solid var(--cc-border) !important;
+  }
+}
+
+/* Ensure the examples area has proper colors */
+html[data-theme="dark"] #cc-help-dialog [data-tab-content="examples"] div,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="examples"]
+    div {
+    color: var(--cc-text-primary);
+  }
+}
+
+/* Ensure strong text is visible */
+html[data-theme="dark"] #cc-help-dialog strong,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #cc-help-dialog strong {
+    color: var(--cc-text-primary) !important;
+  }
+}
+
+/* Ensure the example blocks have proper colors */
+html[data-theme="dark"]
+  #cc-help-dialog
+  [data-tab-content="examples"]
+  div[style*="border-left"],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="examples"]
+    div[style*="border-left"] {
+    border-left-color: var(--cc-decoration-text) !important;
+    background-color: var(--cc-bg-secondary) !important;
+    color: var(--cc-text-primary) !important;
+  }
+}
+
+/* Ensure copy buttons in examples have proper contrast */
+html[data-theme="dark"] #cc-help-dialog [data-tab-content="examples"] button,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="examples"]
+    button {
+    background-color: var(--cc-label-bg) !important;
+    color: var(--cc-text-primary) !important;
+    border-color: var(--cc-border) !important;
+  }
+}
+
+/* Ensure proper contrast for pre elements in dark mode */
+html[data-theme="dark"] #cc-help-dialog pre,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) #cc-help-dialog pre {
+    background-color: var(--cc-bg-secondary) !important;
+    color: var(--cc-text-primary) !important;
+    border: 1px solid var(--cc-border) !important;
+    border-radius: 4px;
+    padding: 6px;
+  }
+}
+
+/* Best practices note box in dark mode */
+html[data-theme="dark"]
+  #cc-help-dialog
+  [data-tab-content="examples"]
+  div[style*="border-left: 4px solid #0969da"],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="examples"]
+    div[style*="border-left: 4px solid #0969da"] {
+    border-left-color: var(--cc-decoration-text) !important;
+    background-color: rgba(56, 139, 253, 0.1) !important;
+  }
+}
+
+/* Additional CSS classes for refactoring inline styles */
+
+/* Panel structure */
+.cc-panel {
+  position: fixed;
+  z-index: 10000;
+  display: none;
+  width: 320px;
+}
+
+/* Panel header */
+.cc-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  cursor: move;
+}
+
+.cc-panel-title {
+  font-weight: bold;
+}
+
+.cc-panel-controls {
+  display: flex;
+}
+
+/* Content area */
+.cc-content {
+  padding: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.cc-section-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.cc-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+/* Footer */
+.cc-footer {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+/* Help dialog */
+.cc-help-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  width: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  display: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+}
+
+.cc-help-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.cc-help-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cc-close-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 24px;
+}
+
+.cc-help-theme-switcher {
+  padding: 0 16px 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+/* Tabs */
+.cc-tabs-container {
+  display: flex;
+}
+
+.cc-tab-button {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cc-tab-active {
+  border-bottom-color: var(--cc-decoration-text);
+  color: var(--cc-decoration-text);
+}
+
+.cc-tab-content {
+  padding: 16px;
+  overflow-y: auto;
+  display: none;
+}
+
+.cc-tab-content-active {
+  display: block;
+}
+
+/* Example items */
+.cc-example-container {
+  margin-bottom: 20px;
+  border: 1px solid var(--cc-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cc-example-header {
+  padding: 10px;
+  background-color: var(--cc-bg-secondary);
+  border-bottom: 1px solid var(--cc-border);
+  font-weight: 600;
+}
+
+.cc-example-content {
+  padding: 12px;
+  border-left: 4px solid var(--cc-decoration-text);
+}
+
+.cc-code-block {
+  padding: 12px;
+  background-color: var(--cc-bg-secondary);
+  border-top: 1px solid var(--cc-border);
+  position: relative;
+}
+
+.cc-code-snippet {
+  margin: 0;
+  font-family: monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--cc-text-primary);
+}
+
+.cc-copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background-color: var(--cc-bg-secondary);
+  border: 1px solid var(--cc-border);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Format box */
+.cc-format-box {
+  margin-bottom: 16px;
+  background-color: var(--cc-bg-secondary);
+  padding: 8px;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+/* Lists */
+.cc-list {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 24px;
+}
+
+/* Badge items */
+.cc-badge-item {
+  margin-bottom: 8px;
+  display: flex;
+}
+
+.cc-badge {
+  flex-shrink: 0;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-right: 8px;
+  font-weight: 600;
+  width: 80px;
+  text-align: center;
+}
+
+.cc-label-badge {
+  background-color: var(--cc-label-bg);
+}
+
+.cc-decoration-badge {
+  background-color: var(--cc-decoration-bg);
+  color: var(--cc-decoration-text);
+}
+
+/* Best practices note */
+.cc-note-box {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: var(--cc-bg-secondary);
+  border-radius: 6px;
+  border-left: 4px solid var(--cc-decoration-text);
+}
+
+/* Floating button */
+.cc-floating-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Control buttons styling */
+.cc-control-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 5px;
+  color: var(--cc-text-secondary);
+}
+
+.cc-control-button:hover {
+  color: var(--cc-text-primary);
+}
+
+/* Help button */
+.cc-control-button[title="Help"] {
+  font-size: 14px;
+  margin-right: 5px;
+}
+
+/* Toggle button */
+.cc-control-button[title="Collapse"],
+.cc-control-button[title="Expand"] {
+  font-size: 12px;
+}
+
+/* Close button */
+.cc-control-button[title="Hide Panel"] {
+  font-size: 16px;
+}
+
+/* Theme switcher specific styling */
+.cc-theme-switcher {
+  margin-top: 15px;
+}
+
+/* Tab styling overrides */
+.cc-tab-active {
+  border-bottom-color: var(--cc-decoration-text) !important;
+  color: var(--cc-decoration-text) !important;
+}
+
+/* Make headings consistent */
+.cc-section-title {
+  margin-top: 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Better list spacing */
+.cc-badge-list {
+  margin-bottom: 16px;
+}
