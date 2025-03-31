@@ -1,4 +1,4 @@
-// This creates a floating panel for GitHub Pull Requests
+// This creates   a floating panel for GitHub Pull Requests
 // Conventional Comments Firefox Extension
 
 (function () {
@@ -206,12 +206,22 @@
 
   // Update theme buttons to reflect current theme
   function updateThemeButtons(activeTheme) {
+    debug(`Updating theme buttons to reflect active theme: ${activeTheme}`);
     const buttons = document.querySelectorAll(".cc-theme-toggle");
+
     buttons.forEach((button) => {
+      // First, remove all active classes
+      button.classList.remove("active");
+
+      // Reset button styling
+      button.style.backgroundColor = "";
+      button.style.borderColor = "";
+      button.style.color = "";
+      button.style.fontWeight = "";
+
+      // Then, only add active class to the correct button
       if (button.dataset.theme === activeTheme) {
         button.classList.add("active");
-      } else {
-        button.classList.remove("active");
       }
     });
   }

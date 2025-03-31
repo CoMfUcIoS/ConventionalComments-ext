@@ -252,6 +252,14 @@
   color: var(--cc-text-primary);
 }
 
+/* Active state for theme toggle buttons */
+.cc-theme-toggle.active {
+  background-color: var(--cc-decoration-active-bg) !important;
+  color: var(--cc-decoration-active-text) !important;
+  border-color: var(--cc-decoration-active-bg) !important;
+  font-weight: 600 !important;
+}
+
 .cc-theme-toggle svg {
   margin-right: 4px;
 }
@@ -307,25 +315,6 @@
   background-color: var(--cc-decoration-active-bg) !important;
   color: var(--cc-decoration-active-text) !important;
   border-color: var(--cc-decoration-active-bg) !important;
-  font-weight: 600;
-}
-
-/* Theme toggle active state */
-html[data-theme="dark"] .cc-theme-toggle[data-theme="dark"],
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .cc-theme-toggle[data-theme="system"] {
-    background-color: var(--cc-dark-decoration-active-bg) !important;
-    color: var(--cc-dark-decoration-active-text) !important;
-    border-color: var(--cc-dark-decoration-active-bg) !important;
-    font-weight: 600;
-  }
-}
-
-html[data-theme="light"] .cc-theme-toggle[data-theme="light"],
-:root:not([data-theme="dark"]) .cc-theme-toggle[data-theme="system"] {
-  background-color: var(--cc-light-decoration-active-bg) !important;
-  color: var(--cc-light-decoration-active-text) !important;
-  border-color: var(--cc-light-decoration-active-bg) !important;
   font-weight: 600;
 }
 
