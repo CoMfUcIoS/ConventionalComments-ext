@@ -1,0 +1,33 @@
+.
+├── .gitignore
+├── README.md
+├── color-variables.css
+├── folderStructure.txt
+├── icons
+│   ├── .gitkeep
+│   └── icon-48.png
+├── manifest.json
+├── package-lock.json
+├── package.json
+├── src
+│   ├── components
+│   │   ├── .gitkeep
+│   │   ├── Button.js
+│   │   ├── HelpDialog.js
+│   │   ├── Panel.js
+│   │   └── ThemeSwitcher.js
+│   ├── content.js
+│   ├── index.js
+│   ├── state.js
+│   └── utils
+│       ├── .gitkeep
+│       ├── constants.js
+│       ├── debug.js
+│       ├── draggable.js
+│       ├── interactions.js
+│       ├── storage.js
+│       └── theme.js
+├── styles.css
+└── webpack.config.js
+
+5 directories, 26 files

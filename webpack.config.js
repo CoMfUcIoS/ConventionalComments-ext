@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
   return {
     mode: isProduction ? "production" : "development",
     entry: {
-      content: "./content.js",
+      content: "./src/content.js",
     },
     output: {
       path: path.resolve(__dirname, "dist"),
@@ -20,6 +20,20 @@ module.exports = (env, argv) => {
     },
     module: {
       rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env"],
+              plugins: [
+                "@babel/plugin-transform-runtime",
+                "@babel/plugin-syntax-dynamic-import",
+              ],
+            },
+          },
+        },
         {
           test: /\.css$/,
           use: [MiniCssExtractPlugin.loader, "css-loader"],
@@ -60,12 +74,17 @@ module.exports = (env, argv) => {
           { from: "styles.css" },
         ],
       }),
-      isProduction
-        ? new ZipPlugin({
-            filename: "conventional-comments-extension.zip",
-          })
-        : null,
+      new ZipPlugin({
+        filename: "conventional-comments-extension.zip",
+      }),
     ].filter(Boolean),
     devtool: isProduction ? false : "source-map",
+    resolve: {
+      extensions: [".js"],
+      alias: {
+        "@components": path.resolve(__dirname, "src/components/"),
+        "@utils": path.resolve(__dirname, "src/utils/"),
+      },
+    },
   };
 };
