@@ -1,4 +1,3 @@
-// Centralized state management
 const state = {
   panel: null,
   visible: false,

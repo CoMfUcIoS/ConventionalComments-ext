@@ -1,4 +1,3 @@
-// Utility functions for handling interactions
 import { debug } from "./debug";
 import state from "../state";
 import {

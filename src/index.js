@@ -1,9 +1,5 @@
-// Entry point for the Conventional Comments extension
 import { debug } from "./utils/debug";
-import {
-  createFloatingButton,
-  initializeButtonDragging,
-} from "./components/Button";
+import { createFloatingButton } from "./components/Button";
 import {
   createPanel,
   togglePanel,
@@ -12,6 +8,7 @@ import {
 } from "./components/Panel";
 import { initializeTheme, setupSystemThemeListener } from "./utils/theme";
 import { loadSavedPosition } from "./utils/storage";
+import { addThemeSwitcher } from "./components/ThemeSwitcher";
 import state from "./state";
 
 // Make state accessible for debugging
@@ -28,33 +25,36 @@ function init() {
   }
 
   try {
-    // Initialize theme first
+    // First, load saved positions to ensure state is set before UI elements are created
+    loadSavedPosition();
+    debug("Loaded saved positions");
+
+    // Initialize theme system
     initializeTheme();
+    debug("Initialized theme system");
 
     // Set up system theme change listener
     setupSystemThemeListener();
+    debug("Set up system theme listener");
 
-    // Create floating button with theme indicator
+    // Create the floating button first (it doesn't depend on the panel)
     const floatingButton = createFloatingButton();
+    debug("Created floating button");
 
-    // Load saved position
-    loadSavedPosition();
+    // Create the panel (it will be hidden initially)
+    const panel = createPanel();
+    debug("Created panel");
 
-    // Create panel (it will be hidden initially)
-    createPanel();
+    // Add theme switcher to panel
+    addThemeSwitcher();
+    debug("Added theme switcher");
 
-    // Important: We need to wait a moment for the DOM to stabilize
-    setTimeout(() => {
-      // Initialize button dragging with panel toggle function
-      // This must be done after panel is created to avoid circular dependencies
-      initializeButtonDragging(togglePanel);
+    // Setup event listeners
+    setupTextareaListeners();
+    setupKeyboardShortcut();
+    debug("Set up event listeners");
 
-      // Setup listeners
-      setupTextareaListeners();
-      setupKeyboardShortcut();
-
-      debug("Enhanced initialization complete with theme support");
-    }, 100);
+    debug("Enhanced initialization complete with theme support");
   } catch (err) {
     console.error("Error initializing Conventional Comments:", err);
   }

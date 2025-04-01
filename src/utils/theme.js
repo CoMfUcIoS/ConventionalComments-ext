@@ -1,4 +1,3 @@
-// Theme management utilities
 import { debug } from "./debug";
 import { loadThemePreference, saveThemePreference } from "./storage";
 
@@ -34,6 +33,12 @@ export function setupSystemThemeListener() {
           // No need to update storage, just refresh UI
           applyTheme("system");
           updateThemeButtons("system");
+
+          // Update theme indicator on floating button if it exists
+          const indicator = document.querySelector(".cc-theme-indicator");
+          if (indicator) {
+            updateThemeIndicator(indicator);
+          }
         }
       });
     };
@@ -61,6 +66,12 @@ export function initializeTheme() {
     if (document.getElementById("conventional-comments-panel")) {
       updateThemeButtons(savedTheme);
     }
+
+    // Update theme indicator on floating button if it exists
+    const indicator = document.querySelector(".cc-theme-indicator");
+    if (indicator) {
+      updateThemeIndicator(indicator);
+    }
   });
 }
 
@@ -79,6 +90,18 @@ export function switchTheme(themeId) {
 
   // Update button states
   updateThemeButtons(themeId);
+
+  // Update theme indicator on floating button if it exists
+  const indicator = document.querySelector(".cc-theme-indicator");
+  if (indicator) {
+    updateThemeIndicator(indicator);
+  }
+
+  // Update help dialog theme buttons if dialog is open
+  const helpDialog = document.getElementById("cc-help-dialog");
+  if (helpDialog && helpDialog.style.display === "block") {
+    updateHelpDialogThemeButtons(themeId);
+  }
 }
 
 /**
@@ -116,6 +139,27 @@ export function updateThemeButtons(activeTheme) {
     button.style.borderColor = "";
     button.style.color = "";
     button.style.fontWeight = "";
+
+    // Then, only add active class to the correct button
+    if (button.dataset.theme === activeTheme) {
+      button.classList.add("active");
+    }
+  });
+}
+
+/**
+ * Update help dialog theme buttons to reflect current theme
+ * @param {string} activeTheme The active theme ID
+ */
+export function updateHelpDialogThemeButtons(activeTheme) {
+  debug(
+    `Updating help dialog theme buttons to reflect active theme: ${activeTheme}`,
+  );
+  const buttons = document.querySelectorAll(".cc-theme-toggle-compact");
+
+  buttons.forEach((button) => {
+    // First, remove all active classes
+    button.classList.remove("active");
 
     // Then, only add active class to the correct button
     if (button.dataset.theme === activeTheme) {

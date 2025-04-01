@@ -1,6 +1,9 @@
-// Help dialog component
 import { debug } from "../utils/debug";
-import { switchTheme, getCurrentTheme } from "../utils/theme";
+import {
+  switchTheme,
+  getCurrentTheme,
+  updateHelpDialogThemeButtons,
+} from "../utils/theme";
 import { THEMES } from "../utils/constants";
 
 /**
@@ -15,6 +18,8 @@ export function showHelp(e) {
 
   if (helpDialog) {
     helpDialog.style.display = "block";
+    // Make sure theme buttons reflect current theme when reopening
+    updateHelpDialogThemeButtons(getCurrentTheme());
     return;
   }
 
@@ -470,25 +475,4 @@ function createExamplesTabContent() {
   examplesContent.appendChild(bestPracticesNote);
 
   return examplesContent;
-}
-
-/**
- * Update theme buttons in the help dialog to reflect current theme
- * @param {string} activeTheme The active theme ID
- */
-function updateHelpDialogThemeButtons(activeTheme) {
-  debug(
-    `Updating help dialog theme buttons to reflect active theme: ${activeTheme}`,
-  );
-  const buttons = document.querySelectorAll(".cc-theme-toggle-compact");
-
-  buttons.forEach((button) => {
-    // First, remove all active classes
-    button.classList.remove("active");
-
-    // Then, only add active class to the correct button
-    if (button.dataset.theme === activeTheme) {
-      button.classList.add("active");
-    }
-  });
 }

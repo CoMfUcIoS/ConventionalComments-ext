@@ -1,4 +1,3 @@
-// Theme switcher component
 import { debug } from "../utils/debug";
 import { switchTheme, getCurrentTheme } from "../utils/theme";
 import { THEMES } from "../utils/constants";

@@ -1,5 +1,4 @@
-// Debug utility functions
-const DEBUG = true; // This will be replaced with a literal by webpack
+const DEBUG = true;
 
 /**
  * Log debug messages to the console when in debug mode

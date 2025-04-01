@@ -1,4 +1,3 @@
-// Browser storage utility functions
 import { debug } from "./debug";
 import state from "../state";
 
@@ -48,30 +47,36 @@ export function loadSavedPosition() {
         if (result.ccPanelPosition) {
           state.position = result.ccPanelPosition;
           debug("Loaded saved panel position:", state.position);
+        } else {
+          // Default position if none saved
+          state.position = { right: "20px", bottom: "20px" };
+          debug("Using default panel position");
         }
 
         if (result.ccButtonPosition) {
           state.buttonPosition = result.ccButtonPosition;
           debug("Loaded saved button position:", state.buttonPosition);
+        } else {
+          // Default button position if none saved
+          state.buttonPosition = { right: "20px", bottom: "80px" };
+          debug("Using default button position");
         }
 
         if (result.ccPanelExpanded !== undefined) {
           state.isExpanded = result.ccPanelExpanded;
           debug("Loaded expanded state:", state.isExpanded);
-        }
-
-        // Apply saved position/state to panel if it exists
-        if (state.panel) {
-          applyPanelPosition();
-          updateExpandState();
-        }
-
-        // Apply saved position to button if it exists
-        if (state.floatingButton) {
-          applyButtonPosition();
+        } else {
+          state.isExpanded = true;
+          debug("Using default expanded state: true");
         }
       },
     );
+  } else {
+    // Set defaults if no storage API
+    state.position = { right: "20px", bottom: "20px" };
+    state.buttonPosition = { right: "20px", bottom: "80px" };
+    state.isExpanded = true;
+    debug("No storage API available, using defaults");
   }
 }
 
@@ -82,6 +87,10 @@ export function savePanelPosition() {
   if (typeof chrome !== "undefined" && chrome.storage) {
     chrome.storage.local.set({ ccPanelPosition: state.position });
     debug("Saved panel position:", state.position);
+  } else {
+    // Fallback to localStorage
+    localStorage.setItem("cc-panel-position", JSON.stringify(state.position));
+    debug("Saved panel position to localStorage:", state.position);
   }
 }
 
@@ -92,6 +101,13 @@ export function saveButtonPosition() {
   if (typeof chrome !== "undefined" && chrome.storage) {
     chrome.storage.local.set({ ccButtonPosition: state.buttonPosition });
     debug("Saved button position:", state.buttonPosition);
+  } else {
+    // Fallback to localStorage
+    localStorage.setItem(
+      "cc-button-position",
+      JSON.stringify(state.buttonPosition),
+    );
+    debug("Saved button position to localStorage:", state.buttonPosition);
   }
 }
 
@@ -102,6 +118,10 @@ export function saveExpandState() {
   if (typeof chrome !== "undefined" && chrome.storage) {
     chrome.storage.local.set({ ccPanelExpanded: state.isExpanded });
     debug("Saved expanded state:", state.isExpanded);
+  } else {
+    // Fallback to localStorage
+    localStorage.setItem("cc-panel-expanded", state.isExpanded.toString());
+    debug("Saved expanded state to localStorage:", state.isExpanded);
   }
 }
 
@@ -114,6 +134,8 @@ export function applyPanelPosition() {
   Object.keys(state.position).forEach((key) => {
     state.panel.style[key] = state.position[key];
   });
+
+  debug("Applied panel position:", state.position);
 }
 
 /**
@@ -132,6 +154,8 @@ export function applyButtonPosition() {
   Object.keys(state.buttonPosition).forEach((key) => {
     state.floatingButton.style[key] = state.buttonPosition[key];
   });
+
+  debug("Applied button position:", state.buttonPosition);
 }
 
 /**
@@ -161,17 +185,29 @@ export function updateExpandState() {
   if (!state.panel) return;
 
   const content = document.getElementById("conventional-comments-content");
+  if (!content) {
+    debug("Could not find content element to update expand state");
+    return;
+  }
+
   const toggleButton = state.panel.querySelector(
     ".cc-control-button[title^='Collapse'], .cc-control-button[title^='Expand']",
   );
+
+  if (!toggleButton) {
+    debug("Could not find toggle button to update expand state");
+    return;
+  }
 
   if (state.isExpanded) {
     content.style.display = "block";
     toggleButton.textContent = "▼";
     toggleButton.title = "Collapse";
+    debug("Panel expanded");
   } else {
     content.style.display = "none";
     toggleButton.textContent = "▲";
     toggleButton.title = "Expand";
+    debug("Panel collapsed");
   }
 }

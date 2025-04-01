@@ -1,4 +1,3 @@
-// Panel component
 import { debug } from "../utils/debug";
 import state from "../state";
 import {
@@ -7,12 +6,12 @@ import {
   LABEL_INFO,
   DECORATION_INFO,
 } from "../utils/constants";
-import { makeDraggable } from "../utils/draggable";
 import {
   saveExpandState,
   updateExpandState,
   applyPanelPosition,
   resetPanelPosition,
+  savePanelPosition,
 } from "../utils/storage";
 import { showHelp } from "./HelpDialog";
 import { addThemeSwitcher } from "./ThemeSwitcher";
@@ -46,27 +45,54 @@ export function createPanel() {
   const controls = document.createElement("div");
   controls.classList.add("cc-panel-controls");
 
+  // Create reset position button
+  const resetPositionBtn = document.createElement("button");
+  resetPositionBtn.textContent = "⟲";
+  resetPositionBtn.classList.add("cc-control-button");
+  resetPositionBtn.title = "Reset Position";
+  resetPositionBtn.style.marginRight = "5px";
+
   // Create help button
   const helpButton = document.createElement("button");
   helpButton.textContent = "?";
   helpButton.classList.add("cc-control-button");
   helpButton.title = "Help";
-  helpButton.addEventListener("click", showHelp);
 
   // Create toggle button
   const toggleButton = document.createElement("button");
   toggleButton.textContent = state.isExpanded ? "▼" : "▲";
   toggleButton.classList.add("cc-control-button");
   toggleButton.title = state.isExpanded ? "Collapse" : "Expand";
-  toggleButton.addEventListener("click", toggleExpand);
 
   // Create close button
   const closeButton = document.createElement("button");
   closeButton.innerHTML = "×";
   closeButton.classList.add("cc-control-button");
   closeButton.title = "Hide Panel";
-  closeButton.addEventListener("click", hidePanel);
 
+  // Add event listeners - IMPORTANT: add them when we create the buttons
+  resetPositionBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetPanelPosition();
+    debug("Reset panel position button clicked");
+  });
+
+  helpButton.addEventListener("click", (e) => {
+    showHelp(e);
+    debug("Help button clicked");
+  });
+
+  toggleButton.addEventListener("click", (e) => {
+    toggleExpand(e);
+    debug("Toggle expand button clicked");
+  });
+
+  closeButton.addEventListener("click", () => {
+    hidePanel();
+    debug("Close button clicked");
+  });
+
+  controls.appendChild(resetPositionBtn);
   controls.appendChild(helpButton);
   controls.appendChild(toggleButton);
   controls.appendChild(closeButton);
@@ -163,15 +189,128 @@ export function createPanel() {
   // Update expand state
   updateExpandState();
 
-  // Make panel draggable
-  makeDraggable(panel, header, resetPanelPosition, false);
-
-  // Add theme switcher
-  addThemeSwitcher();
+  // Make panel draggable - use our own direct implementation
+  makePanelDraggable(panel, header);
 
   debug("Conventional comments panel created");
 
   return panel;
+}
+
+/**
+ * Make panel draggable by handle
+ * @param {HTMLElement} panel The panel element
+ * @param {HTMLElement} handle The handle element
+ */
+function makePanelDraggable(panel, handle) {
+  let isDragging = false;
+  let startX, startY;
+  let startLeft, startTop;
+  const DRAG_THRESHOLD = 3;
+  let initialDx = 0,
+    initialDy = 0;
+  let hasMoved = false;
+
+  handle.addEventListener("mousedown", startDrag);
+  debug("Added mousedown listener to panel handle");
+
+  function startDrag(e) {
+    // Only handle left mouse button
+    if (e.button !== 0) return;
+
+    // Don't start drag if clicked on a button
+    if (e.target.tagName === "BUTTON") return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    isDragging = false;
+    hasMoved = false;
+
+    // Get starting cursor position
+    startX = e.clientX;
+    startY = e.clientY;
+
+    // Get starting element position
+    const rect = panel.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    // Add event listeners
+    document.addEventListener("mousemove", onDrag);
+    document.addEventListener("mouseup", stopDrag);
+    debug("Added drag event listeners to document for panel");
+  }
+
+  function onDrag(e) {
+    // Calculate the distance moved
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    // If we haven't moved beyond the threshold, don't start dragging yet
+    if (!isDragging) {
+      // Check if we've moved beyond the threshold
+      if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
+        isDragging = true;
+
+        // Store initial position difference to prevent jump
+        initialDx = dx;
+        initialDy = dy;
+
+        // Add dragging class for visual feedback
+        panel.classList.add("cc-dragging");
+        debug("Drag threshold exceeded, starting panel drag");
+      } else {
+        return;
+      }
+    }
+
+    e.preventDefault();
+    hasMoved = true;
+
+    // Adjust for initial jump
+    const adjustedDx = dx - initialDx;
+    const adjustedDy = dy - initialDy;
+
+    // Convert to pure position-based positioning
+    const newLeft = Math.max(0, startLeft + adjustedDx);
+    const newTop = Math.max(0, startTop + adjustedDy);
+
+    // Constrain to viewport
+    const maxLeft = window.innerWidth - panel.offsetWidth;
+    const maxTop = window.innerHeight - panel.offsetHeight;
+
+    const constrainedLeft = Math.min(newLeft, maxLeft);
+    const constrainedTop = Math.min(newTop, maxTop);
+
+    // Update element position
+    panel.style.left = `${constrainedLeft}px`;
+    panel.style.top = `${constrainedTop}px`;
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
+
+    // Update state
+    state.position = {
+      left: `${constrainedLeft}px`,
+      top: `${constrainedTop}px`,
+    };
+  }
+
+  function stopDrag() {
+    document.removeEventListener("mousemove", onDrag);
+    document.removeEventListener("mouseup", stopDrag);
+
+    // Remove dragging class
+    panel.classList.remove("cc-dragging");
+
+    if (isDragging && hasMoved) {
+      // If we were dragging, save the position
+      savePanelPosition();
+    }
+
+    isDragging = false;
+    debug("Panel drag stopped");
+  }
 }
 
 /**
@@ -227,6 +366,7 @@ export function toggleExpand(e) {
   state.isExpanded = !state.isExpanded;
   updateExpandState();
   saveExpandState();
+  debug(`Panel expanded state toggled to: ${state.isExpanded}`);
 }
 
 /**

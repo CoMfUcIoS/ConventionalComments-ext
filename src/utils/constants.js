@@ -1,5 +1,3 @@
-// Constants used throughout the application
-
 export const LABELS = [
   "praise",
   "nitpick",
