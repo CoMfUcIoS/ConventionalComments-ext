@@ -1,4 +1,4 @@
-// This creates   a floating panel for GitHub Pull Requests
+// This creates a floating panel for GitHub Pull Requests
 // Conventional Comments Firefox Extension
 
 (function () {
@@ -42,7 +42,9 @@
     activeTextarea: null,
     activeDecorations: new Set(),
     position: { right: "20px", bottom: "20px" },
+    buttonPosition: { right: "20px", bottom: "80px" },
     isExpanded: true,
+    floatingButton: null,
   };
 
   function setupSystemThemeListener() {
@@ -154,8 +156,6 @@
   // Get the current theme
   function getCurrentTheme() {
     if (typeof chrome !== "undefined" && chrome.storage) {
-      // We'll need to handle this asynchronously in the real implementation
-      // This is just a placeholder synchronous version for simplicity
       const savedTheme = localStorage.getItem("cc-theme");
       if (savedTheme) return savedTheme;
     }
@@ -506,6 +506,7 @@
       <li>Add optional decorations (like "non-blocking" or "security").</li>
       <li>Type your comment after the prefix that was added.</li>
       <li>Press Alt+C to quickly show/hide the panel.</li>
+      <li>Drag the floating button or panel header to position them anywhere on the page.</li>
     `;
     guideContent.appendChild(usageList);
 
@@ -669,11 +670,16 @@
   function loadSavedPosition() {
     if (typeof chrome !== "undefined" && chrome.storage) {
       chrome.storage.local.get(
-        ["ccPanelPosition", "ccPanelExpanded"],
+        ["ccPanelPosition", "ccPanelExpanded", "ccButtonPosition"],
         function (result) {
           if (result.ccPanelPosition) {
             state.position = result.ccPanelPosition;
-            debug("Loaded saved position:", state.position);
+            debug("Loaded saved panel position:", state.position);
+          }
+
+          if (result.ccButtonPosition) {
+            state.buttonPosition = result.ccButtonPosition;
+            debug("Loaded saved button position:", state.buttonPosition);
           }
 
           if (result.ccPanelExpanded !== undefined) {
@@ -686,16 +692,29 @@
             applyPanelPosition();
             updateExpandState();
           }
+
+          // Apply saved position to button if it exists
+          if (state.floatingButton) {
+            applyButtonPosition();
+          }
         },
       );
     }
   }
 
-  // Save position to storage
-  function savePosition() {
+  // Save panel position to storage
+  function savePanelPosition() {
     if (typeof chrome !== "undefined" && chrome.storage) {
       chrome.storage.local.set({ ccPanelPosition: state.position });
-      debug("Saved position:", state.position);
+      debug("Saved panel position:", state.position);
+    }
+  }
+
+  // Save button position to storage
+  function saveButtonPosition() {
+    if (typeof chrome !== "undefined" && chrome.storage) {
+      chrome.storage.local.set({ ccButtonPosition: state.buttonPosition });
+      debug("Saved button position:", state.buttonPosition);
     }
   }
 
@@ -713,6 +732,22 @@
 
     Object.keys(state.position).forEach((key) => {
       state.panel.style[key] = state.position[key];
+    });
+  }
+
+  // Apply position to button
+  function applyButtonPosition() {
+    if (!state.floatingButton) return;
+
+    // Clear all position properties first
+    state.floatingButton.style.top = "auto";
+    state.floatingButton.style.right = "auto";
+    state.floatingButton.style.bottom = "auto";
+    state.floatingButton.style.left = "auto";
+
+    // Then apply the saved position properties
+    Object.keys(state.buttonPosition).forEach((key) => {
+      state.floatingButton.style[key] = state.buttonPosition[key];
     });
   }
 
@@ -904,6 +939,22 @@
     }
   }
 
+  // Reset the button position to default
+  function resetButtonPosition() {
+    state.buttonPosition = { right: "20px", bottom: "80px" };
+    applyButtonPosition();
+    saveButtonPosition();
+    debug("Reset button position to default");
+  }
+
+  // Reset the panel position to default
+  function resetPanelPosition() {
+    state.position = { right: "20px", bottom: "20px" };
+    applyPanelPosition();
+    savePanelPosition();
+    debug("Reset panel position to default");
+  }
+
   // Show the panel
   function showPanel() {
     debug("Showing panel");
@@ -946,7 +997,9 @@
     if (!state.panel) return;
 
     const content = document.getElementById("conventional-comments-content");
-    const toggleButton = state.panel.querySelector("button:first-of-type");
+    const toggleButton = state.panel.querySelector(
+      ".cc-control-button[title^='Collapse'], .cc-control-button[title^='Expand']",
+    );
 
     if (state.isExpanded) {
       content.style.display = "block";
@@ -959,22 +1012,45 @@
     }
   }
 
-  // Make an element draggable
+  // Make panel draggable by handle
   function makeDraggable(element, handle) {
     let isDragging = false;
     let startX, startY;
-    let startLeft, startTop, startRight, startBottom;
+    let startLeft, startTop;
+    const DRAG_THRESHOLD = 3;
+    let initialDx = 0,
+      initialDy = 0;
 
     handle.addEventListener("mousedown", startDrag);
+
+    // Add reset position button to panel header
+    const resetBtn = document.createElement("button");
+    resetBtn.textContent = "⟲";
+    resetBtn.classList.add("cc-control-button");
+    resetBtn.title = "Reset Position";
+    resetBtn.style.marginRight = "5px";
+    resetBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      resetPanelPosition();
+    });
+
+    // Add it to the panel controls
+    const controls = handle.querySelector(".cc-panel-controls");
+    if (controls) {
+      controls.insertBefore(resetBtn, controls.firstChild);
+    }
 
     function startDrag(e) {
       // Only handle left mouse button
       if (e.button !== 0) return;
 
+      // Don't start drag if clicked on a button
+      if (e.target.tagName === "BUTTON") return;
+
       e.preventDefault();
       e.stopPropagation();
 
-      isDragging = true;
+      isDragging = false;
 
       // Get starting cursor position
       startX = e.clientX;
@@ -984,8 +1060,6 @@
       const rect = element.getBoundingClientRect();
       startLeft = rect.left;
       startTop = rect.top;
-      startRight = window.innerWidth - rect.right;
-      startBottom = window.innerHeight - rect.bottom;
 
       // Add event listeners
       document.addEventListener("mousemove", onDrag);
@@ -993,52 +1067,309 @@
     }
 
     function onDrag(e) {
-      if (!isDragging) return;
-
-      e.preventDefault();
-
       // Calculate the distance moved
       const dx = e.clientX - startX;
       const dy = e.clientY - startY;
 
-      // Update element position based on its original position
-      if (state.position.left) {
-        const newLeft = Math.max(0, startLeft + dx);
-        element.style.left = `${newLeft}px`;
-        element.style.right = "auto";
-        state.position = { left: `${newLeft}px`, top: element.style.top };
-      } else if (state.position.right) {
-        const newRight = Math.max(0, startRight - dx);
-        element.style.right = `${newRight}px`;
-        element.style.left = "auto";
-        state.position = { right: `${newRight}px`, top: element.style.top };
+      // If we haven't moved beyond the threshold, don't start dragging yet
+      if (!isDragging) {
+        // Check if we've moved beyond the threshold
+        if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
+          isDragging = true;
+
+          // Store initial position difference to prevent jump
+          initialDx = dx;
+          initialDy = dy;
+
+          // Add dragging class for visual feedback
+          element.classList.add("cc-dragging");
+        } else {
+          return; // Not dragging yet
+        }
       }
 
-      if (state.position.top) {
-        const newTop = Math.max(0, startTop + dy);
-        element.style.top = `${newTop}px`;
-        element.style.bottom = "auto";
-        state.position = { ...state.position, top: `${newTop}px` };
-      } else if (state.position.bottom) {
-        const newBottom = Math.max(0, startBottom - dy);
-        element.style.bottom = `${newBottom}px`;
-        element.style.top = "auto";
-        state.position = { ...state.position, bottom: `${newBottom}px` };
-      }
+      e.preventDefault();
+
+      // Adjust for initial jump
+      const adjustedDx = dx - initialDx;
+      const adjustedDy = dy - initialDy;
+
+      // Convert to pure position-based positioning
+      const newLeft = Math.max(0, startLeft + adjustedDx);
+      const newTop = Math.max(0, startTop + adjustedDy);
+
+      // Constrain to viewport
+      const maxLeft = window.innerWidth - element.offsetWidth;
+      const maxTop = window.innerHeight - element.offsetHeight;
+
+      const constrainedLeft = Math.min(newLeft, maxLeft);
+      const constrainedTop = Math.min(newTop, maxTop);
+
+      // Update element position
+      element.style.left = `${constrainedLeft}px`;
+      element.style.top = `${constrainedTop}px`;
+      element.style.right = "auto";
+      element.style.bottom = "auto";
+
+      // Update state
+      state.position = {
+        left: `${constrainedLeft}px`,
+        top: `${constrainedTop}px`,
+      };
     }
 
     function stopDrag() {
-      if (!isDragging) return;
-
-      isDragging = false;
+      if (isDragging) {
+        // Remove dragging class
+        element.classList.remove("cc-dragging");
+        // Save position
+        savePanelPosition();
+      }
 
       // Remove event listeners
       document.removeEventListener("mousemove", onDrag);
       document.removeEventListener("mouseup", stopDrag);
 
-      // Save position
-      savePosition();
+      isDragging = false;
     }
+  }
+
+  // Make floating button draggable with double-click to toggle panel
+  function makeButtonDraggable(button) {
+    let isDragging = false;
+    let startX, startY;
+    let startLeft, startTop;
+    let lastClickTime = 0;
+    const DOUBLE_CLICK_THRESHOLD = 300;
+    const DRAG_THRESHOLD = 3;
+    let initialDx = 0,
+      initialDy = 0;
+    let hasMoved = false;
+
+    button.addEventListener("mousedown", startDrag);
+
+    function startDrag(e) {
+      // Only handle left mouse button
+      if (e.button !== 0) return;
+
+      // Don't start drag if clicked on reset button
+      if (e.target.classList.contains("cc-reset-position")) return;
+
+      e.preventDefault();
+
+      // Check for double click
+      const clickTime = Date.now();
+      if (clickTime - lastClickTime < DOUBLE_CLICK_THRESHOLD) {
+        // It's a double click, toggle the panel
+        togglePanel();
+        lastClickTime = 0;
+        return;
+      }
+
+      // Store time for double click detection
+      lastClickTime = clickTime;
+
+      isDragging = false;
+      hasMoved = false;
+
+      // Get starting cursor position
+      startX = e.clientX;
+      startY = e.clientY;
+
+      // Get starting element position
+      const rect = button.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
+
+      // Add event listeners
+      document.addEventListener("mousemove", onDrag);
+      document.addEventListener("mouseup", stopDrag);
+    }
+
+    function onDrag(e) {
+      // Calculate the distance moved
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      // If we haven't moved beyond the threshold, don't start dragging yet
+      if (!isDragging) {
+        // Check if we've moved beyond the threshold
+        if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
+          isDragging = true;
+          e.stopPropagation(); // Prevent other events when we start dragging
+
+          // Store initial position difference to prevent jump
+          initialDx = dx;
+          initialDy = dy;
+
+          // Add dragging class for visual feedback
+          button.classList.add("cc-dragging");
+        } else {
+          return;
+        }
+      }
+
+      e.preventDefault();
+      hasMoved = true;
+
+      // Adjust for initial jump
+      const adjustedDx = dx - initialDx;
+      const adjustedDy = dy - initialDy;
+
+      // Convert to pure position-based positioning
+      const newLeft = Math.max(0, startLeft + adjustedDx);
+      const newTop = Math.max(0, startTop + adjustedDy);
+
+      // Constrain to viewport
+      const maxLeft = window.innerWidth - button.offsetWidth;
+      const maxTop = window.innerHeight - button.offsetHeight;
+
+      const constrainedLeft = Math.min(newLeft, maxLeft);
+      const constrainedTop = Math.min(newTop, maxTop);
+
+      // Update element position
+      button.style.left = `${constrainedLeft}px`;
+      button.style.top = `${constrainedTop}px`;
+      button.style.right = "auto";
+      button.style.bottom = "auto";
+
+      // Update state
+      state.buttonPosition = {
+        left: `${constrainedLeft}px`,
+        top: `${constrainedTop}px`,
+      };
+    }
+
+    function stopDrag(e) {
+      document.removeEventListener("mousemove", onDrag);
+      document.removeEventListener("mouseup", stopDrag);
+
+      // Remove dragging class
+      button.classList.remove("cc-dragging");
+
+      if (isDragging && hasMoved) {
+        // If we were dragging, save the position
+        saveButtonPosition();
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      isDragging = false;
+    }
+  }
+
+  // Update to createToolbarButton function to add tooltip
+  function createToolbarButton() {
+    debug("Creating floating button");
+
+    // Check if button already exists
+    if (document.querySelector(".cc-floating-button")) {
+      debug("Floating button already exists");
+      return;
+    }
+
+    // Create floating button
+    const button = document.createElement("button");
+    button.className =
+      "conventional-comments-floating-button cc-floating-button";
+    button.innerHTML = "CC";
+    button.title = "Conventional Comments";
+
+    // Add a small theme indicator dot
+    const themeIndicator = document.createElement("span");
+    themeIndicator.className = "cc-theme-indicator";
+    updateThemeIndicator(themeIndicator);
+
+    // Create reset position button
+    const resetPositionBtn = document.createElement("span");
+    resetPositionBtn.className = "cc-reset-position";
+    resetPositionBtn.title = "Reset Position";
+    resetPositionBtn.innerHTML = "⟲";
+    resetPositionBtn.style.display = "none";
+
+    // Create tooltip for instructions
+    const tooltip = document.createElement("span");
+    tooltip.className = "cc-floating-tooltip";
+    tooltip.textContent = "Drag to move • Double-click to open";
+
+    // Add event listener to reset position button
+    resetPositionBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      resetButtonPosition();
+    });
+
+    // Show reset button on hover
+    button.addEventListener("mouseenter", () => {
+      resetPositionBtn.style.display = "block";
+    });
+
+    button.addEventListener("mouseleave", () => {
+      resetPositionBtn.style.display = "none";
+    });
+
+    button.appendChild(themeIndicator);
+    button.appendChild(resetPositionBtn);
+    button.appendChild(tooltip);
+
+    document.body.appendChild(button);
+    debug("Added floating button to body");
+
+    // Store button reference
+    state.floatingButton = button;
+
+    // Apply saved position
+    applyButtonPosition();
+
+    // Make button draggable
+    makeButtonDraggable(button);
+
+    // Set up periodic update of the theme indicator color (in case theme changes)
+    setInterval(() => updateThemeIndicator(themeIndicator), 1000);
+  }
+
+  // Update the theme indicator color based on current theme
+  function updateThemeIndicator(indicator) {
+    if (!indicator) return;
+
+    loadThemePreference(function (theme) {
+      // Set the indicator background color based on theme
+      if (theme === "system") {
+        const isDarkMode =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        indicator.style.backgroundColor = isDarkMode ? "#c9d1d9" : "#24292f";
+      } else if (theme === "light") {
+        indicator.style.backgroundColor = "#24292f";
+      } else if (theme === "dark") {
+        indicator.style.backgroundColor = "#c9d1d9";
+      }
+    });
+  }
+
+  // Listen for textareas getting focus to update active textarea
+  function setupTextareaListeners() {
+    document.addEventListener("focusin", (e) => {
+      if (e.target.tagName === "TEXTAREA") {
+        if (state.activeTextarea !== e.target) {
+          state.activeTextarea = e.target;
+          updateStatus(`Active: ${getTextareaName(e.target)}`);
+
+          // Clear active decorations
+          state.activeDecorations.clear();
+          resetDecorationButtons();
+        }
+      }
+    });
+  }
+
+  // Define keyboard shortcut to toggle panel
+  function setupKeyboardShortcut() {
+    document.addEventListener("keydown", (e) => {
+      // Alt+C shortcut
+      if (e.altKey && e.key === "c") {
+        togglePanel();
+      }
+    });
   }
 
   // Update status based on active textarea
@@ -1197,83 +1528,6 @@
     const buttons = state.panel.querySelectorAll(".cc-decoration-btn");
     buttons.forEach((button) => {
       button.classList.remove("active");
-    });
-  }
-
-  // Create the toolbar button to open/close the panel with theme indicator
-  function createToolbarButton() {
-    debug("Creating floating button");
-
-    // Check if button already exists
-    if (document.querySelector(".cc-floating-button")) {
-      debug("Floating button already exists");
-      return;
-    }
-
-    // Create floating button
-    const button = document.createElement("button");
-    button.className =
-      "conventional-comments-floating-button cc-floating-button";
-    button.innerHTML = "CC";
-    button.title = "Conventional Comments";
-
-    // Add a small theme indicator dot
-    const themeIndicator = document.createElement("span");
-    themeIndicator.className = "cc-theme-indicator";
-    updateThemeIndicator(themeIndicator);
-
-    button.appendChild(themeIndicator);
-    button.addEventListener("click", togglePanel);
-
-    document.body.appendChild(button);
-    debug("Added floating button to body");
-
-    // Set up periodic update of the theme indicator color (in case theme changes)
-    setInterval(() => updateThemeIndicator(themeIndicator), 1000);
-  }
-
-  // Update the theme indicator color based on current theme
-  function updateThemeIndicator(indicator) {
-    if (!indicator) return;
-
-    loadThemePreference(function (theme) {
-      // Set the indicator background color based on theme
-      if (theme === "system") {
-        const isDarkMode =
-          window.matchMedia &&
-          window.matchMedia("(prefers-color-scheme: dark)").matches;
-        indicator.style.backgroundColor = isDarkMode ? "#c9d1d9" : "#24292f";
-      } else if (theme === "light") {
-        indicator.style.backgroundColor = "#24292f";
-      } else if (theme === "dark") {
-        indicator.style.backgroundColor = "#c9d1d9";
-      }
-    });
-  }
-
-  // Listen for textareas getting focus to update active textarea
-  function setupTextareaListeners() {
-    document.addEventListener("focusin", (e) => {
-      if (e.target.tagName === "TEXTAREA") {
-        if (state.activeTextarea !== e.target) {
-          state.activeTextarea = e.target;
-          updateStatus(`Active: ${getTextareaName(e.target)}`);
-
-          // Clear active decorations
-          state.activeDecorations.clear();
-          resetDecorationButtons();
-        }
-      }
-    });
-  }
-
-  // Define keyboard shortcut to toggle panel
-  function setupKeyboardShortcut() {
-    document.addEventListener("keydown", (e) => {
-      // Alt+C shortcut
-      if (e.altKey && e.key === "c") {
-        togglePanel();
-      }
     });
   }
 

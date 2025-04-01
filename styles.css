@@ -742,3 +742,183 @@ html[data-theme="dark"]
 .cc-badge-list {
   margin-bottom: 16px;
 }
+
+/* Reset position button for floating button */
+.cc-reset-position {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--cc-bg-secondary);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-text-secondary);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+  z-index: 10002; /* Ensure it's above the button */
+}
+
+.cc-reset-position:hover {
+  background-color: var(--cc-hover-bg);
+  color: var(--cc-text-primary);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Improve floating button for dragging */
+.cc-floating-button {
+  cursor: move; /* Change cursor to indicate draggability */
+  user-select: none; /* Prevent text selection during drag */
+  touch-action: none; /* Prevent scrolling on touch devices during drag */
+  position: fixed; /* Ensure proper positioning */
+  z-index: 10000; /* High z-index to stay on top */
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease; /* Smooth transitions */
+}
+
+.cc-floating-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cc-floating-button:active {
+  transform: scale(0.98);
+}
+
+/* Panel header cursor */
+.cc-panel-header {
+  cursor: move; /* Change cursor to indicate draggability */
+  user-select: none; /* Prevent text selection during drag */
+}
+
+/* Don't show move cursor on buttons in the header */
+.cc-panel-header button {
+  cursor: pointer;
+}
+
+/* Make panel transition smoother when dragging */
+.cc-panel {
+  transition:
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  position: fixed; /* Ensure proper positioning */
+  z-index: 10000; /* High z-index to stay on top */
+}
+
+/* Active dragging state */
+.cc-dragging {
+  opacity: 0.9;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--cc-decoration-text) !important;
+  z-index: 10001 !important;
+}
+
+/* Cursor for non-draggable areas */
+.cc-content,
+.cc-footer {
+  cursor: default;
+}
+
+/* Improve panel repositioning visual feedback */
+.cc-panel:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+/* Ensure panel header is visually distinct to indicate draggability */
+.cc-panel-header {
+  background-color: var(--cc-bg-secondary);
+  border-bottom: 1px solid var(--cc-border);
+  padding: 8px 12px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+/* Enhanced visual feedback for reset position buttons */
+.cc-control-button[title="Reset Position"] {
+  color: var(--cc-decoration-text);
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+
+.cc-control-button[title="Reset Position"]:hover {
+  transform: rotate(180deg);
+}
+
+/* Improved visual feedback for dragging operations */
+.cc-dragging {
+  opacity: 0.9 !important;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--cc-decoration-text) !important;
+  z-index: 10001 !important;
+  cursor: grabbing !important;
+}
+
+/* Change cursor to indicate draggability */
+.cc-floating-button {
+  cursor: grab;
+}
+
+.cc-panel-header {
+  cursor: grab;
+}
+
+/* Better visual cue for double-click functionality */
+.cc-floating-button:active {
+  cursor: grabbing;
+}
+
+/* Add a subtle pulse animation on hover to indicate interactivity */
+@keyframes cc-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cc-floating-button:hover {
+  animation: cc-pulse 1.5s ease infinite;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Stop animation when actively dragging */
+.cc-dragging {
+  animation: none !important;
+}
+
+/* Subtle tooltip explaining functionality */
+.cc-floating-tooltip {
+  position: absolute;
+  background-color: var(--cc-bg-secondary);
+  color: var(--cc-text-primary);
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--cc-border);
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10002;
+}
+
+.cc-floating-button:hover .cc-floating-tooltip {
+  opacity: 1;
+}
