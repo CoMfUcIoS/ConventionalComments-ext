@@ -13,9 +13,11 @@ export function createFloatingButton() {
   debug("Creating floating button");
 
   // Check if button already exists
-  if (document.querySelector(".cc-floating-button")) {
+  const existingButton = document.querySelector(".cc-floating-button");
+  if (existingButton) {
     debug("Floating button already exists");
-    return;
+    state.floatingButton = existingButton;
+    return existingButton;
   }
 
   // Create floating button
@@ -69,9 +71,6 @@ export function createFloatingButton() {
   // Apply saved position
   applyButtonPosition();
 
-  // Setup will be completed after Panel is initialized to avoid circular dependencies
-  // The actual makeDraggable call will happen from index.js after all components are loaded
-
   // Set up periodic update of the theme indicator color (in case theme changes)
   setInterval(() => updateThemeIndicator(themeIndicator), 1000);
 
@@ -83,14 +82,43 @@ export function createFloatingButton() {
  * @param {Function} togglePanelFn Function to toggle panel visibility
  */
 export function initializeButtonDragging(togglePanelFn) {
-  if (state.floatingButton) {
-    debug("Initializing button dragging with toggle panel function");
-    makeDraggable(
-      state.floatingButton,
-      state.floatingButton,
-      resetButtonPosition,
-      true,
-      togglePanelFn,
-    );
+  if (!state.floatingButton) {
+    debug("Cannot initialize button dragging: button not found");
+    return;
   }
+
+  debug("Initializing button dragging with toggle panel function");
+
+  // Ensure we're working with the actual DOM element
+  const button =
+    state.floatingButton instanceof Element
+      ? state.floatingButton
+      : document.querySelector(".cc-floating-button");
+
+  if (!button) {
+    debug("Button element not found in DOM");
+    return;
+  }
+
+  // Clear any existing event listeners (important for reinitialization)
+  const newButton = button.cloneNode(true);
+  if (button.parentNode) {
+    button.parentNode.replaceChild(newButton, button);
+    state.floatingButton = newButton;
+  }
+
+  // Now make the button draggable with toggle functionality
+  makeDraggable(newButton, newButton, resetButtonPosition, true, togglePanelFn);
+
+  // Also add direct double-click handler as a fallback
+  newButton.addEventListener("dblclick", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    debug("Double-click detected on floating button");
+    if (typeof togglePanelFn === "function") {
+      togglePanelFn();
+    }
+  });
+
+  debug("Button dragging and double-click handler initialized");
 }

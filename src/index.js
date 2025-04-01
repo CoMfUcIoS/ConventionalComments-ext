@@ -14,6 +14,9 @@ import { initializeTheme, setupSystemThemeListener } from "./utils/theme";
 import { loadSavedPosition } from "./utils/storage";
 import state from "./state";
 
+// Make state accessible for debugging
+window.conventionalCommentsState = state;
+
 // Initialize the extension
 function init() {
   debug("Initializing Conventional Comments Extension with theme support");
@@ -32,7 +35,7 @@ function init() {
     setupSystemThemeListener();
 
     // Create floating button with theme indicator
-    createFloatingButton();
+    const floatingButton = createFloatingButton();
 
     // Load saved position
     loadSavedPosition();
@@ -40,15 +43,18 @@ function init() {
     // Create panel (it will be hidden initially)
     createPanel();
 
-    // Initialize button dragging with panel toggle function
-    // This must be done after panel is created to avoid circular dependencies
-    initializeButtonDragging(togglePanel);
+    // Important: We need to wait a moment for the DOM to stabilize
+    setTimeout(() => {
+      // Initialize button dragging with panel toggle function
+      // This must be done after panel is created to avoid circular dependencies
+      initializeButtonDragging(togglePanel);
 
-    // Setup listeners
-    setupTextareaListeners();
-    setupKeyboardShortcut();
+      // Setup listeners
+      setupTextareaListeners();
+      setupKeyboardShortcut();
 
-    debug("Enhanced initialization complete with theme support");
+      debug("Enhanced initialization complete with theme support");
+    }, 100);
   } catch (err) {
     console.error("Error initializing Conventional Comments:", err);
   }

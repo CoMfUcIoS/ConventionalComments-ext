@@ -18,6 +18,13 @@ export function makeDraggable(
   isButton = false,
   togglePanelFn = null,
 ) {
+  if (!element || !handle) {
+    debug("Cannot make draggable: element or handle is null");
+    return;
+  }
+
+  debug(`Making ${isButton ? "button" : "panel"} draggable`);
+
   let isDragging = false;
   let startX, startY;
   let startLeft, startTop;
@@ -30,7 +37,16 @@ export function makeDraggable(
   let lastClickTime = 0;
   const DOUBLE_CLICK_THRESHOLD = 300;
 
+  // Remove any existing mouse event handlers by cloning and replacing
+  const newHandle = handle.cloneNode(true);
+  if (handle.parentNode && handle !== element) {
+    handle.parentNode.replaceChild(newHandle, handle);
+    handle = newHandle;
+  }
+
+  // Add mousedown listener to handle
   handle.addEventListener("mousedown", startDrag);
+  debug(`Added mousedown listener to ${isButton ? "button" : "panel"} handle`);
 
   // Add reset position button
   if (!isButton) {
@@ -53,6 +69,8 @@ export function makeDraggable(
   }
 
   function startDrag(e) {
+    debug(`Drag start triggered on ${isButton ? "button" : "panel"}`);
+
     // Only handle left mouse button
     if (e.button !== 0) return;
 
@@ -60,8 +78,10 @@ export function makeDraggable(
     if (
       e.target.tagName === "BUTTON" ||
       e.target.classList.contains("cc-reset-position")
-    )
+    ) {
+      debug("Click on button or reset position - not starting drag");
       return;
+    }
 
     e.preventDefault();
 
@@ -70,6 +90,7 @@ export function makeDraggable(
       const clickTime = Date.now();
       if (clickTime - lastClickTime < DOUBLE_CLICK_THRESHOLD) {
         // It's a double click, toggle the panel
+        debug("Double click detected - toggling panel");
         togglePanelFn();
         lastClickTime = 0;
         return;
@@ -94,6 +115,8 @@ export function makeDraggable(
     // Add event listeners
     document.addEventListener("mousemove", onDrag);
     document.addEventListener("mouseup", stopDrag);
+
+    debug("Mouse event listeners added for drag");
   }
 
   function onDrag(e) {
@@ -106,6 +129,8 @@ export function makeDraggable(
       // Check if we've moved beyond the threshold
       if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
         isDragging = true;
+        debug("Drag threshold exceeded, starting drag");
+
         if (isButton) {
           e.stopPropagation(); // Prevent other events when we start dragging for button
         }
@@ -162,6 +187,8 @@ export function makeDraggable(
   function stopDrag(e) {
     document.removeEventListener("mousemove", onDrag);
     document.removeEventListener("mouseup", stopDrag);
+
+    debug("Drag stopped");
 
     // Remove dragging class
     element.classList.remove("cc-dragging");
