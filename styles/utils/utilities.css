@@ -1,0 +1,122 @@
+/* Utility classes */
+
+/* Dragging state */
+.cc-dragging {
+  opacity: 0.9 !important;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--cc-decoration-text, #0969da) !important;
+  z-index: 10001 !important;
+  cursor: grabbing !important;
+}
+
+/* Active states */
+.cc-active,
+.cc-decoration-btn.active,
+.cc-theme-toggle.active,
+.cc-theme-toggle-compact.active,
+.cc-tab-active {
+  background-color: var(--cc-decoration-active-bg, #0969da) !important;
+  color: var(--cc-decoration-active-text, #ffffff) !important;
+  border-color: var(--cc-decoration-active-bg, #0969da) !important;
+  font-weight: bold !important;
+}
+
+/* Fix for focus state for accessibility */
+.cc-label-btn:focus,
+.cc-decoration-btn:focus,
+.cc-theme-toggle:focus,
+.cc-theme-toggle-compact:focus,
+.cc-tab-button:focus,
+.cc-control-button:focus {
+  outline: 2px solid var(--cc-decoration-text, #0969da);
+  outline-offset: 1px;
+}
+
+/* Hide/show utils */
+.cc-hidden {
+  display: none !important;
+}
+
+.cc-visible {
+  display: block !important;
+}
+
+/* Spacing utilities */
+.cc-mb-xs {
+  margin-bottom: 4px;
+}
+
+.cc-mb-sm {
+  margin-bottom: 8px;
+}
+
+.cc-mb-md {
+  margin-bottom: 12px;
+}
+
+.cc-mb-lg {
+  margin-bottom: 16px;
+}
+
+.cc-mt-xs {
+  margin-top: 4px;
+}
+
+.cc-mt-sm {
+  margin-top: 8px;
+}
+
+.cc-mt-md {
+  margin-top: 12px;
+}
+
+.cc-mt-lg {
+  margin-top: 16px;
+}
+
+/* Cursor utilities */
+.cc-cursor-grab {
+  cursor: grab;
+}
+
+.cc-cursor-grabbing {
+  cursor: grabbing;
+}
+
+.cc-cursor-pointer {
+  cursor: pointer;
+}
+
+.cc-cursor-default {
+  cursor: default;
+}
+
+/* Flex utilities */
+.cc-flex {
+  display: flex;
+}
+
+.cc-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.cc-justify-between {
+  justify-content: space-between;
+}
+
+.cc-items-center {
+  align-items: center;
+}
+
+.cc-gap-xs {
+  gap: 4px;
+}
+
+.cc-gap-sm {
+  gap: 8px;
+}
+
+.cc-gap-md {
+  gap: 12px;
+}

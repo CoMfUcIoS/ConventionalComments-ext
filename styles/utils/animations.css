@@ -1,0 +1,64 @@
+/* Animation for theme change */
+@keyframes cc-theme-flash {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.cc-theme-transition {
+  animation: cc-theme-flash 0.5s ease;
+}
+
+/* Pulse animation for floating button */
+@keyframes cc-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Dialog appear animation */
+@keyframes cc-dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Appear animation for fade-in elements */
+@keyframes cc-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Theme toggle active pulse animation */
+@keyframes cc-theme-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

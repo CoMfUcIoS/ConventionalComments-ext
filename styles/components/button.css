@@ -1,0 +1,144 @@
+/* Generic button styles */
+.cc-control-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 var(--cc-spacing-xs);
+  color: var(--cc-text-secondary);
+  transition: color var(--cc-transition-fast);
+}
+
+.cc-control-button:hover {
+  color: var(--cc-text-primary);
+}
+
+/* Label buttons */
+.cc-label-btn {
+  background-color: var(--cc-label-bg);
+  border: 1px solid var(--cc-label-border);
+  border-radius: var(--cc-border-radius-md);
+  padding: var(--cc-spacing-xs) var(--cc-spacing-sm);
+  cursor: pointer;
+  font-size: var(--cc-font-size-small);
+  transition: all var(--cc-transition-fast);
+  color: var(--cc-label-text);
+  font-weight: var(--cc-font-weight-medium);
+}
+
+.cc-label-btn:hover {
+  background-color: var(--cc-hover-bg);
+  border-color: var(--cc-hover-border);
+}
+
+.cc-label-btn:focus {
+  outline: 2px solid var(--cc-decoration-text);
+  outline-offset: 1px;
+}
+
+/* Decoration buttons */
+.cc-decoration-btn {
+  background-color: var(--cc-decoration-bg);
+  border: 1px solid var(--cc-decoration-border);
+  border-radius: var(--cc-border-radius-md);
+  padding: var(--cc-spacing-xs) var(--cc-spacing-sm);
+  cursor: pointer;
+  font-size: var(--cc-font-size-small);
+  transition: all var(--cc-transition-fast);
+  color: var(--cc-decoration-text);
+  font-weight: var(--cc-font-weight-medium);
+}
+
+.cc-decoration-btn:hover {
+  background-color: var(--cc-hover-bg);
+  border-color: var(--cc-hover-border);
+}
+
+.cc-decoration-btn.active {
+  background-color: var(--cc-decoration-active-bg) !important;
+  color: var(--cc-decoration-active-text) !important;
+  border-color: var(--cc-decoration-active-bg) !important;
+  font-weight: var(--cc-font-weight-bold);
+}
+
+.cc-decoration-btn:focus {
+  outline: 2px solid var(--cc-decoration-text);
+  outline-offset: 1px;
+}
+
+/* Close button */
+.cc-close-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 24px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--cc-border-radius-sm);
+  color: var(--cc-text-secondary);
+  transition: background-color var(--cc-transition-fast);
+}
+
+.cc-close-button:hover {
+  background-color: var(--cc-hover-bg);
+  color: var(--cc-text-primary);
+}
+
+/* Reset position button */
+.cc-reset-position {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--cc-border-radius-circle);
+  background-color: var(--cc-bg-secondary);
+  border: 1px solid var(--cc-border);
+  color: var(--cc-text-secondary);
+  font-size: var(--cc-font-size-small);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all var(--cc-transition-fast);
+  z-index: 10002;
+}
+
+.cc-reset-position:hover {
+  background-color: var(--cc-hover-bg);
+  color: var(--cc-text-primary);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Copy button */
+.cc-copy-button {
+  position: absolute;
+  top: var(--cc-spacing-sm);
+  right: var(--cc-spacing-sm);
+  padding: var(--cc-spacing-xs) var(--cc-spacing-sm);
+  background-color: var(--cc-bg-secondary);
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-border-radius-md);
+  font-size: var(--cc-font-size-small);
+  cursor: pointer;
+  color: var(--cc-text-primary);
+  transition: all var(--cc-transition-fast);
+}
+
+.cc-copy-button:hover {
+  background-color: var(--cc-hover-bg);
+  border-color: var(--cc-hover-border);
+}
+
+/* Button containers */
+.cc-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cc-spacing-xs);
+  margin-bottom: var(--cc-spacing-lg);
+}

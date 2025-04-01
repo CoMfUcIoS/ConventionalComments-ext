@@ -1,0 +1,70 @@
+/* Header styles for panels and dialogs */
+
+/* Panel header */
+.cc-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+  cursor: grab;
+  user-select: none;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+
+.cc-panel-title {
+  font-weight: bold;
+  margin: 0;
+}
+
+.cc-panel-controls {
+  display: flex;
+}
+
+/* Help dialog header */
+.cc-help-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+  cursor: grab;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.cc-help-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.cc-help-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cc-text-primary, #24292f);
+}
+
+/* Header right container with theme toggles and close button */
+.cc-header-right-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Cursor states for headers when dragging */
+.cc-panel.cc-dragging .cc-panel-header,
+.cc-help-dialog.cc-dragging .cc-help-dialog-header {
+  cursor: grabbing !important;
+}
+
+/* Don't show move cursor on buttons in the header */
+.cc-panel-header button,
+.cc-help-dialog-header button {
+  cursor: pointer;
+}

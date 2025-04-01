@@ -1,0 +1,121 @@
+/* Dark Theme */
+html[data-theme="dark"] {
+  --cc-bg-primary: var(--cc-dark-bg-primary);
+  --cc-bg-secondary: var(--cc-dark-bg-secondary);
+  --cc-border: var(--cc-dark-border);
+  --cc-text-primary: var(--cc-dark-text-primary);
+  --cc-text-secondary: var(--cc-dark-text-secondary);
+
+  --cc-label-bg: var(--cc-dark-label-bg);
+  --cc-label-border: var(--cc-dark-label-border);
+  --cc-label-text: var(--cc-dark-label-text);
+  --cc-decoration-bg: var(--cc-dark-decoration-bg);
+  --cc-decoration-border: var(--cc-dark-decoration-border);
+  --cc-decoration-text: var(--cc-dark-decoration-text);
+
+  --cc-decoration-active-bg: var(--cc-dark-decoration-active-bg);
+  --cc-decoration-active-text: var(--cc-dark-decoration-active-text);
+  --cc-hover-bg: var(--cc-dark-hover-bg);
+  --cc-hover-border: var(--cc-dark-hover-border);
+
+  --cc-floating-bg: var(--cc-dark-floating-bg);
+  --cc-floating-text: var(--cc-dark-floating-text);
+  --cc-floating-hover: var(--cc-dark-floating-hover);
+}
+
+/* Auto-detect system theme preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cc-bg-primary: var(--cc-dark-bg-primary);
+    --cc-bg-secondary: var(--cc-dark-bg-secondary);
+    --cc-border: var(--cc-dark-border);
+    --cc-text-primary: var(--cc-dark-text-primary);
+    --cc-text-secondary: var(--cc-dark-text-secondary);
+
+    --cc-label-bg: var(--cc-dark-label-bg);
+    --cc-label-border: var(--cc-dark-label-border);
+    --cc-label-text: var(--cc-dark-label-text);
+    --cc-decoration-bg: var(--cc-dark-decoration-bg);
+    --cc-decoration-border: var(--cc-dark-decoration-border);
+    --cc-decoration-text: var(--cc-dark-decoration-text);
+
+    --cc-decoration-active-bg: var(--cc-dark-decoration-active-bg);
+    --cc-decoration-active-text: var(--cc-dark-decoration-active-text);
+    --cc-hover-bg: var(--cc-dark-hover-bg);
+    --cc-hover-border: var(--cc-dark-hover-border);
+
+    --cc-floating-bg: var(--cc-dark-floating-bg);
+    --cc-floating-text: var(--cc-dark-floating-text);
+    --cc-floating-hover: var(--cc-dark-floating-hover);
+  }
+}
+
+/* Theme toggle buttons */
+.cc-theme-toggle {
+  background-color: var(--cc-bg-secondary);
+  color: var(--cc-text-secondary);
+  border: 1px solid var(--cc-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cc-theme-toggle:hover {
+  background-color: var(--cc-hover-bg);
+  color: var(--cc-text-primary);
+}
+
+.cc-theme-toggle.active {
+  background-color: var(--cc-decoration-active-bg) !important;
+  color: var(--cc-decoration-active-text) !important;
+  border-color: var(--cc-decoration-active-bg) !important;
+  font-weight: 600 !important;
+}
+
+.cc-theme-toggle:focus {
+  outline: 2px solid var(--cc-decoration-text);
+  outline-offset: 1px;
+}
+
+/* Compact theme toggles for header */
+.cc-theme-toggle-compact {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--cc-bg-secondary);
+  color: var(--cc-text-secondary);
+  border: 1px solid var(--cc-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cc-theme-toggle-compact:hover {
+  background-color: var(--cc-hover-bg);
+  color: var(--cc-text-primary);
+}
+
+.cc-theme-toggle-compact.active {
+  background-color: var(--cc-decoration-active-bg) !important;
+  color: var(--cc-decoration-active-text) !important;
+  border-color: var(--cc-decoration-active-bg) !important;
+}
+
+.cc-theme-toggle-compact:focus {
+  outline: 2px solid var(--cc-decoration-text);
+  outline-offset: 1px;
+}
+
+/* Theme switcher container */
+.cc-theme-switcher {
+  margin-top: 15px;
+}

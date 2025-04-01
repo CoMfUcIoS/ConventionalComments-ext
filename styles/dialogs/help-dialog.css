@@ -1,0 +1,123 @@
+/* Help Dialog Styling */
+
+/* Basic dialog styling */
+#cc-help-dialog,
+.cc-help-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  width: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  display: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  transition:
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+  background-color: var(--cc-bg-primary, #ffffff);
+  color: var(--cc-text-primary, #24292f);
+  border: 1px solid var(--cc-border, #d0d7de);
+}
+
+/* Dialog header - defined in header.css */
+
+/* Fixed header for help dialog */
+#cc-help-dialog .panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+}
+
+/* Reset position button */
+#cc-help-dialog .cc-control-button[title="Reset Position"] {
+  color: var(--cc-text-secondary, #57606a);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 5px;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+#cc-help-dialog .cc-control-button[title="Reset Position"]:hover {
+  transform: rotate(180deg);
+  color: var(--cc-text-primary, #24292f);
+}
+
+/* Fix for tabs to be sticky too */
+#cc-help-dialog > div:nth-child(3) {
+  position: sticky;
+  top: 53px; /* Height of the header + padding */
+  z-index: 9;
+  background-color: var(--cc-bg-primary, #ffffff);
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+}
+
+/* Make theme switcher stay with header */
+#cc-help-dialog > div:nth-child(2) {
+  position: sticky;
+  top: 53px;
+  background-color: var(--cc-bg-primary, #ffffff);
+  z-index: 9;
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+}
+
+/* Adjust tab position when theme switcher is present */
+#cc-help-dialog > div:nth-child(3) {
+  top: 94px; /* Adjusted to account for theme switcher */
+}
+
+#cc-help-dialog button {
+  color: var(--cc-text-secondary, #57606a);
+}
+
+#cc-help-dialog button:hover {
+  color: var(--cc-text-primary, #24292f);
+}
+
+/* Help dialog entrance animation */
+@keyframes cc-dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+#cc-help-dialog a {
+  color: var(--cc-decoration-text, #0969da);
+  text-decoration: none;
+}
+
+#cc-help-dialog a:hover {
+  text-decoration: underline;
+}
+
+/* Help dialog dragging state */
+#cc-help-dialog.cc-dragging {
+  opacity: 0.9;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--cc-decoration-text, #0969da) !important;
+  z-index: 10002 !important;
+}
+
+/* Active dragging cursor */
+#cc-help-dialog.cc-dragging .cc-help-dialog-header {
+  cursor: grabbing !important;
+}

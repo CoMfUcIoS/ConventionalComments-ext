@@ -70,9 +70,8 @@ module.exports = (env, argv) => {
         patterns: [
           { from: "manifest.json" },
           { from: "icons", to: "icons" },
-          { from: "color-variables.css" },
+          { from: "styles", to: "styles" },
           { from: "styles.css" },
-          { from: "help-dialog.css" },
         ],
       }),
       new ZipPlugin({
@@ -85,6 +84,7 @@ module.exports = (env, argv) => {
       alias: {
         "@components": path.resolve(__dirname, "src/components/"),
         "@utils": path.resolve(__dirname, "src/utils/"),
+        "@styles": path.resolve(__dirname, "styles/"),
       },
     },
   };

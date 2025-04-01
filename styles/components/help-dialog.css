@@ -1,0 +1,130 @@
+/* Help Dialog Styling */
+.cc-help-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: var(--cc-border-radius-md);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  width: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 10001;
+  display: none;
+  font-family: var(--cc-font-family);
+  font-size: var(--cc-font-size-base);
+  transition:
+    box-shadow var(--cc-transition-fast),
+    opacity var(--cc-transition-fast);
+  background-color: var(--cc-bg-primary);
+  color: var(--cc-text-primary);
+  border: 1px solid var(--cc-border);
+}
+
+/* Dialog header */
+.cc-help-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--cc-spacing-md) var(--cc-spacing-lg);
+  background-color: var(--cc-bg-secondary);
+  border-bottom: 1px solid var(--cc-border);
+  cursor: grab;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Title container */
+.cc-help-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.cc-help-title {
+  margin: 0;
+  font-size: var(--cc-font-size-large);
+  font-weight: var(--cc-font-weight-bold);
+  color: var(--cc-text-primary);
+}
+
+/* Header right container with theme toggles and close button */
+.cc-header-right-container {
+  display: flex;
+  align-items: center;
+  gap: var(--cc-spacing-md);
+}
+
+/* Theme toggle container in header */
+.cc-header-theme-toggles {
+  display: flex;
+  gap: var(--cc-spacing-xs);
+}
+
+/* Help dialog dragging state */
+.cc-help-dialog.cc-dragging {
+  opacity: 0.9;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--cc-decoration-text) !important;
+  z-index: 10002 !important;
+}
+
+/* Active dragging cursor */
+.cc-help-dialog.cc-dragging .cc-help-dialog-header {
+  cursor: grabbing !important;
+}
+
+/* Fix for headers in tab content */
+.cc-tab-content h3 {
+  color: var(--cc-text-primary);
+  margin-top: var(--cc-spacing-xl);
+  margin-bottom: var(--cc-spacing-sm);
+}
+
+/* Tab content */
+.cc-tab-content {
+  padding: var(--cc-spacing-lg);
+  overflow-y: auto;
+  display: none;
+  color: var(--cc-text-primary);
+}
+
+.cc-tab-content-active {
+  display: block;
+}
+
+/* General text settings */
+.cc-tab-content p {
+  margin-bottom: var(--cc-spacing-md);
+  line-height: var(--cc-line-height);
+}
+
+/* Links */
+.cc-help-dialog a {
+  color: var(--cc-decoration-text);
+  text-decoration: none;
+}
+
+.cc-help-dialog a:hover {
+  text-decoration: underline;
+}
+
+/* Strong emphasis */
+.cc-help-dialog strong {
+  color: var(--cc-text-primary);
+}
+
+@keyframes cc-dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

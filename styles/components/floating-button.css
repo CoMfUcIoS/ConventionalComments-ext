@@ -1,0 +1,87 @@
+/* Floating button */
+.cc-floating-button,
+.conventional-comments-floating-button {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: grab;
+  z-index: 9999;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cc-floating-bg, #0969da);
+  color: var(--cc-floating-text, #ffffff);
+  transition: all 0.2s ease;
+  user-select: none;
+  touch-action: none;
+}
+
+.cc-floating-button:hover,
+.conventional-comments-floating-button:hover {
+  background-color: var(--cc-floating-hover, #0550ae);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  animation: cc-pulse 1.5s ease infinite;
+}
+
+.cc-floating-button:active,
+.conventional-comments-floating-button:active {
+  transform: scale(0.95);
+  cursor: grabbing;
+}
+
+/* Tooltip for floating button */
+.cc-floating-tooltip {
+  position: absolute;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  color: var(--cc-text-primary, #24292f);
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--cc-border, #d0d7de);
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10002;
+}
+
+.cc-floating-button:hover .cc-floating-tooltip,
+.conventional-comments-floating-button:hover .cc-floating-tooltip {
+  opacity: 1;
+}
+
+/* Dragging state */
+.cc-floating-button.cc-dragging,
+.conventional-comments-floating-button.cc-dragging {
+  opacity: 0.9;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--cc-decoration-text, #0969da) !important;
+  z-index: 10001 !important;
+  cursor: grabbing !important;
+  animation: none !important;
+}
+
+/* Theme indicator on the floating button */
+.cc-theme-indicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--cc-floating-bg, #0969da);
+  transition: background-color 0.3s ease;
+}

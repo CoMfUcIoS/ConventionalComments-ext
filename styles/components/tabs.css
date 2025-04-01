@@ -1,0 +1,36 @@
+/* Tabs container */
+.cc-tabs-container {
+  display: flex;
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+  background-color: var(--cc-bg-primary, #ffffff);
+  position: sticky;
+  top: 53px;
+  z-index: 9;
+}
+
+/* Tab buttons */
+.cc-tab-button {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cc-text-secondary, #57606a);
+  transition: all 0.2s ease;
+}
+
+.cc-tab-button:hover {
+  color: var(--cc-text-primary, #24292f);
+}
+
+.cc-tab-active {
+  border-bottom-color: var(--cc-decoration-text, #0969da) !important;
+  color: var(--cc-decoration-text, #0969da) !important;
+}
+
+/* Adjust tab position when theme switcher is present */
+.cc-tabs-container + .cc-theme-switcher + .cc-tabs-container {
+  top: 94px;
+}

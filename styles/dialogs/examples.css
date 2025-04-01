@@ -1,0 +1,98 @@
+/* Example containers */
+.cc-example-container {
+  margin-bottom: 20px;
+  border: 1px solid var(--cc-border, #d0d7de);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.cc-example-header {
+  padding: 10px;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-bottom: 1px solid var(--cc-border, #d0d7de);
+  font-weight: 600;
+  color: var(--cc-text-primary, #24292f);
+}
+
+.cc-example-content {
+  padding: 12px;
+  border-left: 4px solid var(--cc-decoration-text, #0969da);
+  background-color: var(--cc-bg-primary, #ffffff);
+  color: var(--cc-text-primary, #24292f);
+}
+
+/* Code block */
+.cc-code-block {
+  padding: 12px;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-top: 1px solid var(--cc-border, #d0d7de);
+  position: relative;
+}
+
+.cc-code-snippet {
+  margin: 0;
+  font-family: monospace;
+  font-size: 12px;
+  white-space: pre-wrap;
+  color: var(--cc-text-primary, #24292f);
+}
+
+/* Format box */
+.cc-format-box {
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-radius: 6px;
+  padding: 12px;
+  font-family: monospace;
+  color: var(--cc-text-primary, #24292f);
+  border: 1px solid var(--cc-border, #d0d7de);
+  margin-bottom: 16px;
+}
+
+/* Lists */
+.cc-list {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding-left: 24px;
+  color: var(--cc-text-primary, #24292f);
+}
+
+.cc-list li {
+  margin-bottom: 4px;
+}
+
+/* Best practices note */
+.cc-note-box {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: var(--cc-bg-secondary, #f6f8fa);
+  border-radius: 6px;
+  border-left: 4px solid var(--cc-decoration-text, #0969da);
+  color: var(--cc-text-primary, #24292f);
+}
+
+/* Ensure the examples area has proper colors in dark mode */
+html[data-theme="dark"] #cc-help-dialog [data-tab-content="examples"] div,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="examples"]
+    div {
+    color: var(--cc-text-primary);
+  }
+}
+
+/* Ensure the example blocks have proper colors in dark mode */
+html[data-theme="dark"]
+  #cc-help-dialog
+  [data-tab-content="examples"]
+  div[style*="border-left"],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    #cc-help-dialog
+    [data-tab-content="examples"]
+    div[style*="border-left"] {
+    border-left-color: var(--cc-decoration-text) !important;
+    background-color: var(--cc-bg-secondary) !important;
+    color: var(--cc-text-primary) !important;
+  }
+}

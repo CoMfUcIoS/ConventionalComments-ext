@@ -1,0 +1,124 @@
+/* Dark theme specific enhancements and fixes */
+
+/* Fix for monospace content in dark mode */
+html[data-theme="dark"] .cc-help-dialog code,
+html[data-theme="dark"] .cc-help-dialog pre,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog code,
+  :root:not([data-theme="light"]) .cc-help-dialog pre {
+    background-color: var(--cc-bg-secondary);
+    color: var(--cc-text-primary);
+  }
+}
+
+/* Make badges more visible in dark mode */
+html[data-theme="dark"] .cc-help-dialog .cc-label-badge,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog .cc-label-badge {
+    background-color: var(--cc-dark-label-bg);
+    color: var(--cc-dark-label-text);
+    border-color: var(--cc-dark-label-border);
+  }
+}
+
+html[data-theme="dark"] .cc-help-dialog .cc-decoration-badge,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog .cc-decoration-badge {
+    background-color: var(--cc-dark-decoration-bg);
+    color: var(--cc-dark-decoration-text);
+    border-color: var(--cc-dark-decoration-border);
+  }
+}
+
+/* Fix note box border in dark mode */
+html[data-theme="dark"] .cc-help-dialog .cc-note-box,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog .cc-note-box {
+    border-left-color: var(--cc-dark-decoration-text);
+  }
+}
+
+/* Additional dark mode fixes for content elements */
+html[data-theme="dark"] .cc-help-dialog ul li,
+html[data-theme="dark"] .cc-help-dialog ol li,
+html[data-theme="dark"] .cc-help-dialog p,
+html[data-theme="dark"] .cc-help-dialog div,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog ul li,
+  :root:not([data-theme="light"]) .cc-help-dialog ol li,
+  :root:not([data-theme="light"]) .cc-help-dialog p,
+  :root:not([data-theme="light"]) .cc-help-dialog div {
+    color: var(--cc-text-primary);
+  }
+}
+
+/* Ensure the format section in the guide tab has proper colors */
+html[data-theme="dark"]
+  .cc-help-dialog
+  [data-tab-content="guide"]
+  .cc-format-box,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])
+    .cc-help-dialog
+    [data-tab-content="guide"]
+    .cc-format-box {
+    background-color: var(--cc-bg-secondary) !important;
+    color: var(--cc-text-primary) !important;
+    border: 1px solid var(--cc-border) !important;
+  }
+}
+
+/* Best practices note box in dark mode */
+html[data-theme="dark"] .cc-help-dialog .cc-note-box,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog .cc-note-box {
+    border-left-color: var(--cc-decoration-text) !important;
+    background-color: rgba(56, 139, 253, 0.1) !important;
+  }
+}
+
+/* Ensure proper contrast for pre elements in dark mode */
+html[data-theme="dark"] .cc-help-dialog pre,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-help-dialog pre {
+    background-color: var(--cc-bg-secondary) !important;
+    color: var(--cc-text-primary) !important;
+    border: 1px solid var(--cc-border) !important;
+    border-radius: 4px;
+    padding: 6px;
+  }
+}
+
+/* Better shadow contrast for dark mode */
+html[data-theme="dark"] .cc-panel,
+html[data-theme="dark"] .cc-help-dialog,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-panel,
+  :root:not([data-theme="light"]) .cc-help-dialog {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+html[data-theme="dark"] .cc-panel:hover,
+html[data-theme="dark"] .cc-help-dialog:hover,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-panel:hover,
+  :root:not([data-theme="light"]) .cc-help-dialog:hover {
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Fix for floating button in dark mode */
+html[data-theme="dark"] .cc-floating-button,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-floating-button {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  }
+}
+
+html[data-theme="dark"] .cc-floating-button:hover,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-floating-button:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+  }
+}

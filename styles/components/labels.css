@@ -1,0 +1,55 @@
+/* Styles for labels and badges */
+
+/* Label badge components */
+.cc-badge {
+  flex-shrink: 0;
+  border-radius: 6px;
+  padding: 2px 8px;
+  margin-right: 8px;
+  font-weight: 600;
+  width: 110px;
+  text-align: center;
+}
+
+.cc-label-badge {
+  background-color: var(--cc-label-bg, #e1e4e8);
+  color: var(--cc-label-text, #24292f);
+  border: 1px solid var(--cc-label-border, #d0d7de);
+}
+
+.cc-decoration-badge {
+  background-color: var(--cc-decoration-bg, #ddf4ff);
+  color: var(--cc-decoration-text, #0969da);
+  border: 1px solid var(--cc-decoration-border, #a5d6ff);
+}
+
+/* Badge items with description */
+.cc-badge-item {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Badge list container */
+.cc-badge-list {
+  margin-bottom: 16px;
+}
+
+/* Ensure proper contrast for badges in dark mode */
+html[data-theme="dark"] .cc-label-badge,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-label-badge {
+    background-color: var(--cc-dark-label-bg, #2d333b);
+    color: var(--cc-dark-label-text, #ffffff);
+    border-color: var(--cc-dark-label-border, #768390);
+  }
+}
+
+html[data-theme="dark"] .cc-decoration-badge,
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cc-decoration-badge {
+    background-color: var(--cc-dark-decoration-bg, #1a3356);
+    color: var(--cc-dark-decoration-text, #a5d6ff);
+    border-color: var(--cc-dark-decoration-border, #559af0);
+  }
+}

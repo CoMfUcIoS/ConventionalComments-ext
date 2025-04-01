@@ -1,0 +1,67 @@
+/* Base typography styles */
+.cc-panel,
+.cc-help-dialog {
+  font-family: var(--cc-font-family);
+  font-size: var(--cc-font-size-base);
+  line-height: var(--cc-line-height);
+  color: var(--cc-text-primary);
+}
+
+/* Headers */
+.cc-panel-title,
+.cc-help-title {
+  font-weight: var(--cc-font-weight-bold);
+  color: var(--cc-text-primary);
+}
+
+.cc-section-title {
+  font-weight: var(--cc-font-weight-bold);
+  font-size: var(--cc-font-size-base);
+  color: var(--cc-text-primary);
+  margin-top: var(--cc-spacing-lg);
+  margin-bottom: var(--cc-spacing-xs);
+}
+
+/* Status text */
+#cc-status-text {
+  color: var(--cc-text-secondary);
+  font-size: var(--cc-font-size-small);
+}
+
+/* Links */
+.cc-panel a,
+.cc-help-dialog a {
+  color: var(--cc-decoration-text);
+  text-decoration: none;
+}
+
+.cc-panel a:hover,
+.cc-help-dialog a:hover {
+  text-decoration: underline;
+}
+
+/* Code text */
+.cc-code-snippet,
+.cc-format-box {
+  font-family: monospace;
+  font-size: var(--cc-font-size-small);
+  line-height: 1.4;
+}
+
+/* Strong emphasis */
+.cc-panel strong,
+.cc-help-dialog strong {
+  font-weight: var(--cc-font-weight-bold);
+  color: var(--cc-text-primary);
+}
+
+/* Paragraph spacing */
+.cc-tab-content p {
+  margin-bottom: var(--cc-spacing-md);
+}
+
+/* List items */
+.cc-list li {
+  line-height: var(--cc-line-height);
+  margin-bottom: var(--cc-spacing-xs);
+}

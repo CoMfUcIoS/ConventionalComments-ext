@@ -1,0 +1,77 @@
+/* Content area styles */
+
+/* Main panel content */
+.cc-content {
+  padding: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+  cursor: default;
+}
+
+/* Section titles */
+.cc-section-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+/* Button containers within content */
+.cc-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+/* Help dialog tab content */
+.cc-tab-content {
+  padding: 16px;
+  overflow-y: auto;
+  display: none;
+  color: var(--cc-text-primary, #24292f);
+}
+
+.cc-tab-content-active {
+  display: block;
+}
+
+/* Content spacing and layout */
+.cc-tab-content p {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.cc-tab-content h3 {
+  color: var(--cc-text-primary, #24292f);
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+
+/* Scrollable content areas */
+.cc-content,
+.cc-tab-content,
+.cc-help-dialog {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cc-border, #d0d7de) transparent;
+}
+
+.cc-content::-webkit-scrollbar,
+.cc-tab-content::-webkit-scrollbar,
+.cc-help-dialog::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cc-content::-webkit-scrollbar-track,
+.cc-tab-content::-webkit-scrollbar-track,
+.cc-help-dialog::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cc-content::-webkit-scrollbar-thumb,
+.cc-tab-content::-webkit-scrollbar-thumb,
+.cc-help-dialog::-webkit-scrollbar-thumb {
+  background-color: var(--cc-border, #d0d7de);
+  border-radius: 4px;
+}
