@@ -110,13 +110,16 @@ export function createPanel() {
   const labelsTitle = document.createElement("div");
   labelsTitle.textContent = "Labels";
   labelsTitle.classList.add("cc-section-title");
+  labelsTitle.id = "cc-labels-title";
   content.appendChild(labelsTitle);
 
   const labelsContainer = document.createElement("div");
   labelsContainer.classList.add("cc-button-container");
+  labelsContainer.id = "cc-labels-container";
 
   // Add labels section with button event listeners
-  LABELS.forEach((label) => {
+  const labelsToUse = state.customLabels || LABELS;
+  labelsToUse.forEach((label) => {
     const button = document.createElement("button");
     button.textContent = label;
     button.dataset.label = label;
@@ -134,18 +137,28 @@ export function createPanel() {
     labelsContainer.appendChild(button);
   });
 
+  // Add "+" button for customizing labels
+  const { addLabelsCustomizeButton } =
+    window.conventionalCommentsExtensionAPI || {};
+  if (addLabelsCustomizeButton) {
+    addLabelsCustomizeButton(labelsContainer);
+  }
+
   content.appendChild(labelsContainer);
 
   // Add decorations section
   const decorationsTitle = document.createElement("div");
   decorationsTitle.textContent = "Decorations";
   decorationsTitle.classList.add("cc-section-title");
+  decorationsTitle.id = "cc-decorations-title";
   content.appendChild(decorationsTitle);
 
   const decorationsContainer = document.createElement("div");
   decorationsContainer.classList.add("cc-button-container");
+  decorationsContainer.id = "cc-decorations-container";
 
-  DECORATIONS.forEach((decoration) => {
+  const decorationsToUse = state.customDecorations || DECORATIONS;
+  decorationsToUse.forEach((decoration) => {
     const button = document.createElement("button");
     button.textContent = decoration;
     button.dataset.decoration = decoration;
@@ -162,6 +175,13 @@ export function createPanel() {
 
     decorationsContainer.appendChild(button);
   });
+
+  // Add "+" button for customizing decorations
+  const { addDecorationsCustomizeButton } =
+    window.conventionalCommentsExtensionAPI || {};
+  if (addDecorationsCustomizeButton) {
+    addDecorationsCustomizeButton(decorationsContainer);
+  }
 
   content.appendChild(decorationsContainer);
 
@@ -192,7 +212,12 @@ export function createPanel() {
   // Make panel draggable - use our own direct implementation
   makePanelDraggable(panel, header);
 
-  debug("Conventional comments panel created");
+  // Add theme switcher - only add it once
+  addThemeSwitcher();
+
+  debug(
+    "Conventional comments panel created with customization buttons and explicit IDs",
+  );
 
   return panel;
 }
@@ -571,3 +596,17 @@ export function setupKeyboardShortcut() {
     }
   });
 }
+
+// Create extension API if it doesn't exist
+if (!window.conventionalCommentsExtensionAPI) {
+  window.conventionalCommentsExtensionAPI = {};
+}
+
+// Add the API functions
+window.conventionalCommentsExtensionAPI = {
+  ...window.conventionalCommentsExtensionAPI,
+  insertLabel,
+  toggleDecoration,
+  updateStatus,
+  resetDecorationButtons,
+};

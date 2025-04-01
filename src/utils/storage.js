@@ -291,3 +291,126 @@ export function updateExpandState() {
     debug("Panel collapsed");
   }
 }
+
+// Add these functions to your existing src/utils/storage.js file
+
+/**
+ * Load custom labels from storage
+ * @param {Function} callback Function to call with the loaded labels
+ */
+export function loadCustomLabels(callback) {
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.sync.get("ccCustomLabels", function (result) {
+      const savedLabels = result.ccCustomLabels || null;
+      debug(
+        `Loaded custom labels from sync storage: ${savedLabels ? JSON.stringify(savedLabels) : "none"}`,
+      );
+      callback(savedLabels);
+    });
+  } else {
+    // Fallback to localStorage
+    try {
+      const savedLabels =
+        JSON.parse(localStorage.getItem("cc-custom-labels")) || null;
+      debug(
+        `Loaded custom labels from localStorage: ${savedLabels ? JSON.stringify(savedLabels) : "none"}`,
+      );
+      callback(savedLabels);
+    } catch (e) {
+      debug("Error loading custom labels from localStorage:", e);
+      callback(null);
+    }
+  }
+}
+
+/**
+ * Save custom labels to storage
+ * @param {Array} labels The custom labels to save
+ */
+export function saveCustomLabels(labels) {
+  if (!labels) {
+    debug("Attempted to save null or undefined labels, aborting");
+    return;
+  }
+
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.sync.set({ ccCustomLabels: labels }, function () {
+      debug(`Custom labels saved to sync storage: ${JSON.stringify(labels)}`);
+
+      // Also save to local storage as a backup
+      chrome.storage.local.set({ ccCustomLabels: labels });
+    });
+  } else {
+    // Fallback to localStorage
+    try {
+      localStorage.setItem("cc-custom-labels", JSON.stringify(labels));
+      debug(`Custom labels saved to localStorage: ${JSON.stringify(labels)}`);
+    } catch (e) {
+      debug("Error saving custom labels to localStorage:", e);
+    }
+  }
+}
+
+/**
+ * Load custom decorations from storage
+ * @param {Function} callback Function to call with the loaded decorations
+ */
+export function loadCustomDecorations(callback) {
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.sync.get("ccCustomDecorations", function (result) {
+      const savedDecorations = result.ccCustomDecorations || null;
+      debug(
+        `Loaded custom decorations from sync storage: ${savedDecorations ? JSON.stringify(savedDecorations) : "none"}`,
+      );
+      callback(savedDecorations);
+    });
+  } else {
+    // Fallback to localStorage
+    try {
+      const savedDecorations =
+        JSON.parse(localStorage.getItem("cc-custom-decorations")) || null;
+      debug(
+        `Loaded custom decorations from localStorage: ${savedDecorations ? JSON.stringify(savedDecorations) : "none"}`,
+      );
+      callback(savedDecorations);
+    } catch (e) {
+      debug("Error loading custom decorations from localStorage:", e);
+      callback(null);
+    }
+  }
+}
+
+/**
+ * Save custom decorations to storage
+ * @param {Array} decorations The custom decorations to save
+ */
+export function saveCustomDecorations(decorations) {
+  if (!decorations) {
+    debug("Attempted to save null or undefined decorations, aborting");
+    return;
+  }
+
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.sync.set({ ccCustomDecorations: decorations }, function () {
+      debug(
+        `Custom decorations saved to sync storage: ${JSON.stringify(decorations)}`,
+      );
+
+      // Also save to local storage as a backup
+      chrome.storage.local.set({ ccCustomDecorations: decorations });
+    });
+  } else {
+    // Fallback to localStorage
+    try {
+      localStorage.setItem(
+        "cc-custom-decorations",
+        JSON.stringify(decorations),
+      );
+      debug(
+        `Custom decorations saved to localStorage: ${JSON.stringify(decorations)}`,
+      );
+    } catch (e) {
+      debug("Error saving custom decorations to localStorage:", e);
+    }
+  }
+}

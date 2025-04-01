@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Conventional Comments for GitHub",
-  "version": "1.3.0",
-  "description": "Adds a floating panel for Conventional Comments on GitHub Pull Requests with theme support",
+  "version": "1.4.0",
+  "description": "Adds a floating panel for Conventional Comments on GitHub Pull Requests with theme support and custom labels",
   "icons": {
     "16": "icons/icon-16.png",
     "48": "icons/icon-48.png",
@@ -18,7 +18,12 @@
         "*://github.com/*/*/discussions/*"
       ],
       "js": ["content.js"],
-      "css": ["color-variables.css", "styles.css", "help-dialog.css"],
+      "css": [
+        "color-variables.css",
+        "styles.css",
+        "help-dialog.css",
+        "custom-labels.css"
+      ],
       "run_at": "document_end"
     }
   ],

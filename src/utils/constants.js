@@ -1,4 +1,7 @@
-export const LABELS = [
+// Update your src/utils/constants.js file to include DEFAULT_LABELS and DEFAULT_DECORATIONS
+
+// Default conventional comment labels
+export const DEFAULT_LABELS = [
   "praise",
   "nitpick",
   "suggestion",
@@ -10,7 +13,8 @@ export const LABELS = [
   "note",
 ];
 
-export const DECORATIONS = [
+// Default conventional comment decorations
+export const DEFAULT_DECORATIONS = [
   "non-blocking",
   "blocking",
   "if-minor",
@@ -18,6 +22,11 @@ export const DECORATIONS = [
   "security",
   "test",
 ];
+
+// Use these arrays for the LABELS and DECORATIONS exports
+export const LABELS = DEFAULT_LABELS;
+
+export const DECORATIONS = DEFAULT_DECORATIONS;
 
 // Label descriptions for tooltips
 export const LABEL_INFO = {

@@ -8,6 +8,10 @@ const state = {
   helpDialogPosition: { top: "50%", left: "50%" },
   isExpanded: true,
   floatingButton: null,
+  originalLabels: null,
+  originalDecorations: null,
+  customLabels: null,
+  customDecorations: null,
 };
 
 export default state;

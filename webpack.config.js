@@ -73,6 +73,7 @@ module.exports = (env, argv) => {
           { from: "color-variables.css" },
           { from: "styles.css" },
           { from: "help-dialog.css" },
+          { from: "custom-labels.css" },
         ],
       }),
       new ZipPlugin({
