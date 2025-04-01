@@ -1,5 +1,5 @@
 /* Import theme variables */
-@import "color-variables.css";
+@import "./color-variables.css";
 
 /* Panel styling */
 #conventional-comments-panel {
