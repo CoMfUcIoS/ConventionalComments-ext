@@ -140,7 +140,7 @@
   top: 53px;
   background-color: var(--cc-bg-primary);
   z-index: 9;
-  padding-top: 8px;
+  border-bottom: 1px solid var(--cc-border);
 }
 
 /* Adjust tab position when theme switcher is present */
@@ -518,9 +518,79 @@ html[data-theme="dark"]
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 12px 16px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+  background-color: var(--cc-bg-secondary);
+}
+
+/* Title container for better spacing */
+.cc-help-title-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Right side of header with theme toggles and close button */
+.cc-header-right-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Theme toggles within header */
+.cc-header-theme-toggles {
+  display: flex;
+  gap: 4px;
+}
+
+/* Compact theme toggle buttons for header */
+.cc-theme-toggle-compact {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+/* Style for active theme toggle in header */
+.cc-theme-toggle-compact.active {
+  background-color: var(--cc-decoration-active-bg);
+  color: var(--cc-decoration-active-text);
+  border-color: var(--cc-decoration-active-bg);
+}
+
+/* Focus styles for accessibility */
+.cc-theme-toggle-compact:focus {
+  outline: 2px solid var(--cc-decoration-text);
+  outline-offset: 1px;
+}
+
+/* Hover effect for theme toggles */
+.cc-theme-toggle-compact:hover {
+  background-color: var(--cc-hover-bg);
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Animation for active toggle */
+.cc-theme-toggle-compact.active {
+  animation: cc-theme-pulse 0.5s ease;
+}
+
+@keyframes cc-theme-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .cc-help-title {
@@ -535,6 +605,18 @@ html[data-theme="dark"]
   cursor: pointer;
   padding: 0;
   font-size: 24px;
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.cc-close-button:hover {
+  background-color: var(--cc-hover-bg);
 }
 
 .cc-help-theme-switcher {

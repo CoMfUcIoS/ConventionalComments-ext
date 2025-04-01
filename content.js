@@ -247,10 +247,41 @@
     const header = document.createElement("div");
     header.classList.add("cc-help-dialog-header", "panel-header");
 
+    // Title container (to keep title on the left)
+    const titleContainer = document.createElement("div");
+    titleContainer.classList.add("cc-help-title-container");
+
     const title = document.createElement("h2");
     title.textContent = "Conventional Comments Guide";
     title.classList.add("cc-help-title");
+    titleContainer.appendChild(title);
 
+    // Right side container for theme toggles and close button
+    const headerRightContainer = document.createElement("div");
+    headerRightContainer.classList.add("cc-header-right-container");
+
+    // Create theme toggles for the header
+    const headerThemeToggles = document.createElement("div");
+    headerThemeToggles.classList.add("cc-header-theme-toggles");
+
+    const themes = [
+      { id: "system", label: "", icon: "🖥️", title: "System Theme" },
+      { id: "light", label: "", icon: "☀️", title: "Light Theme" },
+      { id: "dark", label: "", icon: "🌙", title: "Dark Theme" },
+    ];
+
+    themes.forEach((theme) => {
+      const button = document.createElement("button");
+      button.className = "cc-theme-toggle cc-theme-toggle-compact";
+      button.dataset.theme = theme.id;
+      button.innerHTML = theme.icon;
+      button.title = theme.title;
+      button.addEventListener("click", () => switchTheme(theme.id));
+
+      headerThemeToggles.appendChild(button);
+    });
+
+    // Close button
     const closeButton = document.createElement("button");
     closeButton.innerHTML = "×";
     closeButton.classList.add("cc-close-button");
@@ -258,33 +289,16 @@
       helpDialog.style.display = "none";
     });
 
-    header.appendChild(title);
-    header.appendChild(closeButton);
+    // Add theme toggles and close button to right container
+    headerRightContainer.appendChild(headerThemeToggles);
+    headerRightContainer.appendChild(closeButton);
+
+    // Add both containers to header
+    header.appendChild(titleContainer);
+    header.appendChild(headerRightContainer);
     helpDialog.appendChild(header);
 
-    // Add theme switcher to the help dialog
-    const helpThemeSwitcher = document.createElement("div");
-    helpThemeSwitcher.classList.add("cc-help-theme-switcher");
-
-    const themes = [
-      { id: "system", label: "System", icon: "🖥️" },
-      { id: "light", label: "Light", icon: "☀️" },
-      { id: "dark", label: "Dark", icon: "🌙" },
-    ];
-
-    themes.forEach((theme) => {
-      const button = document.createElement("button");
-      button.className = "cc-theme-toggle";
-      button.dataset.theme = theme.id;
-      button.innerHTML = `${theme.icon} ${theme.label}`;
-      button.addEventListener("click", () => switchTheme(theme.id));
-
-      helpThemeSwitcher.appendChild(button);
-    });
-
-    helpDialog.appendChild(helpThemeSwitcher);
-
-    // Update theme toggle buttons
+    // Update theme toggle buttons immediately
     updateThemeButtons(getCurrentTheme());
 
     // Create tabs
