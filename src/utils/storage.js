@@ -42,7 +42,12 @@ export function loadThemePreference(callback) {
 export function loadSavedPosition() {
   if (typeof chrome !== "undefined" && chrome.storage) {
     chrome.storage.local.get(
-      ["ccPanelPosition", "ccPanelExpanded", "ccButtonPosition"],
+      [
+        "ccPanelPosition",
+        "ccPanelExpanded",
+        "ccButtonPosition",
+        "ccHelpDialogPosition",
+      ],
       function (result) {
         if (result.ccPanelPosition) {
           state.position = result.ccPanelPosition;
@@ -62,6 +67,15 @@ export function loadSavedPosition() {
           debug("Using default button position");
         }
 
+        if (result.ccHelpDialogPosition) {
+          state.helpDialogPosition = result.ccHelpDialogPosition;
+          debug("Loaded saved help dialog position:", state.helpDialogPosition);
+        } else {
+          // Default help dialog position if none saved
+          state.helpDialogPosition = { top: "50%", left: "50%" };
+          debug("Using default help dialog position");
+        }
+
         if (result.ccPanelExpanded !== undefined) {
           state.isExpanded = result.ccPanelExpanded;
           debug("Loaded expanded state:", state.isExpanded);
@@ -75,6 +89,7 @@ export function loadSavedPosition() {
     // Set defaults if no storage API
     state.position = { right: "20px", bottom: "20px" };
     state.buttonPosition = { right: "20px", bottom: "80px" };
+    state.helpDialogPosition = { top: "50%", left: "50%" };
     state.isExpanded = true;
     debug("No storage API available, using defaults");
   }
@@ -126,6 +141,28 @@ export function saveExpandState() {
 }
 
 /**
+ * Save help dialog position to storage
+ */
+export function saveHelpDialogPosition() {
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.set({
+      ccHelpDialogPosition: state.helpDialogPosition,
+    });
+    debug("Saved help dialog position:", state.helpDialogPosition);
+  } else {
+    // Fallback to localStorage
+    localStorage.setItem(
+      "cc-help-dialog-position",
+      JSON.stringify(state.helpDialogPosition),
+    );
+    debug(
+      "Saved help dialog position to localStorage:",
+      state.helpDialogPosition,
+    );
+  }
+}
+
+/**
  * Apply saved position to panel
  */
 export function applyPanelPosition() {
@@ -159,6 +196,36 @@ export function applyButtonPosition() {
 }
 
 /**
+ * Apply saved position to help dialog
+ * @param {HTMLElement} helpDialog The help dialog element
+ */
+export function applyHelpDialogPosition(helpDialog) {
+  if (!helpDialog) return;
+
+  // If position is percentage-based, we need to keep the transform for centering
+  if (
+    state.helpDialogPosition.top === "50%" &&
+    state.helpDialogPosition.left === "50%"
+  ) {
+    helpDialog.style.top = "50%";
+    helpDialog.style.left = "50%";
+    helpDialog.style.transform = "translate(-50%, -50%)";
+    debug("Applied default centered help dialog position");
+    return;
+  }
+
+  // Clear the transform and apply the saved position
+  helpDialog.style.transform = "none";
+
+  // Apply saved position properties
+  Object.keys(state.helpDialogPosition).forEach((key) => {
+    helpDialog.style[key] = state.helpDialogPosition[key];
+  });
+
+  debug("Applied help dialog position:", state.helpDialogPosition);
+}
+
+/**
  * Reset the button position to default
  */
 export function resetButtonPosition() {
@@ -176,6 +243,19 @@ export function resetPanelPosition() {
   applyPanelPosition();
   savePanelPosition();
   debug("Reset panel position to default");
+}
+
+/**
+ * Reset the help dialog position to default centered position
+ * @param {HTMLElement} helpDialog The help dialog element
+ */
+export function resetHelpDialogPosition(helpDialog) {
+  if (!helpDialog) return;
+
+  state.helpDialogPosition = { top: "50%", left: "50%" };
+  applyHelpDialogPosition(helpDialog);
+  saveHelpDialogPosition();
+  debug("Reset help dialog position to default center");
 }
 
 /**

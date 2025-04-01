@@ -18,7 +18,7 @@
         "*://github.com/*/*/discussions/*"
       ],
       "js": ["content.js"],
-      "css": ["color-variables.css", "styles.css"],
+      "css": ["color-variables.css", "styles.css", "help-dialog.css"],
       "run_at": "document_end"
     }
   ],

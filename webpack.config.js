@@ -72,6 +72,7 @@ module.exports = (env, argv) => {
           { from: "icons", to: "icons" },
           { from: "color-variables.css" },
           { from: "styles.css" },
+          { from: "help-dialog.css" },
         ],
       }),
       new ZipPlugin({

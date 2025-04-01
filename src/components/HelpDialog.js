@@ -5,6 +5,149 @@ import {
   updateHelpDialogThemeButtons,
 } from "../utils/theme";
 import { THEMES } from "../utils/constants";
+import state from "../state";
+import {
+  saveHelpDialogPosition,
+  applyHelpDialogPosition,
+  resetHelpDialogPosition,
+} from "../utils/storage";
+
+/**
+ * Make the help dialog draggable by its header
+ * @param {HTMLElement} helpDialog The help dialog element
+ * @param {HTMLElement} handle The handle element (header)
+ */
+function makeHelpDialogDraggable(helpDialog, handle) {
+  if (!helpDialog || !handle) {
+    debug("Cannot make help dialog draggable: dialog or handle is null");
+    return;
+  }
+
+  let isDragging = false;
+  let startX, startY;
+  let startLeft, startTop;
+  const DRAG_THRESHOLD = 3;
+  let initialDx = 0,
+    initialDy = 0;
+  let hasMoved = false;
+
+  handle.addEventListener("mousedown", startDrag);
+  debug("Added mousedown listener to help dialog header");
+
+  function startDrag(e) {
+    // Only handle left mouse button
+    if (e.button !== 0) return;
+
+    // Don't start drag if clicked on a button
+    if (e.target.tagName === "BUTTON") return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    isDragging = false;
+    hasMoved = false;
+
+    // Get starting cursor position
+    startX = e.clientX;
+    startY = e.clientY;
+
+    // Get starting element position
+    const rect = helpDialog.getBoundingClientRect();
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    // Add event listeners
+    document.addEventListener("mousemove", onDrag);
+    document.addEventListener("mouseup", stopDrag);
+    debug("Added drag event listeners to document for help dialog");
+  }
+
+  function onDrag(e) {
+    // Calculate the distance moved
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    // If we haven't moved beyond the threshold, don't start dragging yet
+    if (!isDragging) {
+      // Check if we've moved beyond the threshold
+      if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
+        isDragging = true;
+        e.stopPropagation();
+
+        // Store initial position difference to prevent jump
+        initialDx = dx;
+        initialDy = dy;
+
+        // Add dragging class for visual feedback
+        helpDialog.classList.add("cc-dragging");
+
+        // If this is the first time we're dragging from the default centered position,
+        // we need to convert from centered positioning to absolute
+        if (
+          state.helpDialogPosition.top === "50%" &&
+          state.helpDialogPosition.left === "50%"
+        ) {
+          helpDialog.style.transform = "none";
+          helpDialog.style.top = startTop + "px";
+          helpDialog.style.left = startLeft + "px";
+        }
+
+        debug("Drag threshold exceeded, starting help dialog drag");
+      } else {
+        return;
+      }
+    }
+
+    e.preventDefault();
+    hasMoved = true;
+
+    // Adjust for initial jump
+    const adjustedDx = dx - initialDx;
+    const adjustedDy = dy - initialDy;
+
+    // Convert to pure position-based positioning
+    const newLeft = Math.max(0, startLeft + adjustedDx);
+    const newTop = Math.max(0, startTop + adjustedDy);
+
+    // Constrain to viewport
+    const maxLeft = window.innerWidth - helpDialog.offsetWidth;
+    const maxTop = window.innerHeight - helpDialog.offsetHeight;
+
+    const constrainedLeft = Math.min(newLeft, maxLeft);
+    const constrainedTop = Math.min(newTop, maxTop);
+
+    // Update element position
+    helpDialog.style.left = `${constrainedLeft}px`;
+    helpDialog.style.top = `${constrainedTop}px`;
+
+    // Update state
+    state.helpDialogPosition = {
+      left: `${constrainedLeft}px`,
+      top: `${constrainedTop}px`,
+    };
+  }
+
+  function stopDrag(e) {
+    document.removeEventListener("mousemove", onDrag);
+    document.removeEventListener("mouseup", stopDrag);
+
+    // Remove dragging class
+    helpDialog.classList.remove("cc-dragging");
+
+    if (isDragging && hasMoved) {
+      // If we were dragging, save the position
+      saveHelpDialogPosition();
+
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+
+    isDragging = false;
+    debug("Help dialog drag stopped");
+  }
+}
 
 /**
  * Show help dialog with guidance on using Conventional Comments
@@ -20,6 +163,8 @@ export function showHelp(e) {
     helpDialog.style.display = "block";
     // Make sure theme buttons reflect current theme when reopening
     updateHelpDialogThemeButtons(getCurrentTheme());
+    // Apply saved position
+    applyHelpDialogPosition(helpDialog);
     return;
   }
 
@@ -31,6 +176,8 @@ export function showHelp(e) {
   // Header
   const header = document.createElement("div");
   header.classList.add("cc-help-dialog-header", "panel-header");
+  // Add cursor: grab to indicate draggability
+  header.style.cursor = "grab";
 
   // Title container (to keep title on the left)
   const titleContainer = document.createElement("div");
@@ -60,6 +207,18 @@ export function showHelp(e) {
     headerThemeToggles.appendChild(button);
   });
 
+  // Create reset position button
+  const resetPositionBtn = document.createElement("button");
+  resetPositionBtn.textContent = "⟲";
+  resetPositionBtn.classList.add("cc-control-button");
+  resetPositionBtn.title = "Reset Position";
+  resetPositionBtn.style.marginRight = "5px";
+  resetPositionBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetHelpDialogPosition(helpDialog);
+    debug("Reset help dialog position button clicked");
+  });
+
   // Close button
   const closeButton = document.createElement("button");
   closeButton.innerHTML = "×";
@@ -68,7 +227,8 @@ export function showHelp(e) {
     helpDialog.style.display = "none";
   });
 
-  // Add theme toggles and close button to right container
+  // Add reset button, theme toggles and close button to right container
+  headerRightContainer.appendChild(resetPositionBtn);
   headerRightContainer.appendChild(headerThemeToggles);
   headerRightContainer.appendChild(closeButton);
 
@@ -130,6 +290,12 @@ export function showHelp(e) {
 
   // Add dialog to page
   document.body.appendChild(helpDialog);
+
+  // Apply saved position
+  applyHelpDialogPosition(helpDialog);
+
+  // Make the dialog draggable
+  makeHelpDialogDraggable(helpDialog, header);
 
   // Display the dialog
   helpDialog.style.display = "block";
@@ -318,7 +484,7 @@ function createGuideTabContent() {
     <li>Add optional decorations (like "non-blocking" or "security").</li>
     <li>Type your comment after the prefix that was added.</li>
     <li>Press Alt+C to quickly show/hide the panel.</li>
-    <li>Drag the floating button or panel header to position them anywhere on the page.</li>
+    <li>Drag the floating button, panel header, or this help dialog header to position them anywhere on the page.</li>
   `;
   guideContent.appendChild(usageList);
 
