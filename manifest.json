@@ -30,7 +30,7 @@
   "permissions": ["storage"],
   "applications": {
     "gecko": {
-      "id": "conventional-comments@example.com"
+      "id": "conventional-comments@studio110.eu"
     }
   }
 }

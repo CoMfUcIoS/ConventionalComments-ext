@@ -2,7 +2,6 @@ import { debug } from "./utils/debug";
 import { createFloatingButton } from "./components/Button";
 import {
   createPanel,
-  togglePanel,
   setupTextareaListeners,
   setupKeyboardShortcut,
 } from "./components/Panel";
@@ -14,10 +13,10 @@ import {
   saveCustomLabels,
   saveCustomDecorations,
 } from "./utils/storage";
-import { addThemeSwitcher } from "./components/ThemeSwitcher";
 import { initializeCustomLabelsManager } from "./components/CustomLabelsManager";
 import { DEFAULT_LABELS, DEFAULT_DECORATIONS } from "./utils/constants";
 import state from "./state";
+import { initializeHighlighting } from "./utils/highlight";
 
 // Make state accessible for debugging
 window.conventionalCommentsState = state;
@@ -54,17 +53,18 @@ function init() {
     loadExtensionData()
       .then(() => {
         // Create the floating button
-        const floatingButton = createFloatingButton();
+        createFloatingButton();
         debug("Created floating button");
 
         // Create the panel with the loaded custom labels/decorations
-        const panel = createPanel();
+        createPanel();
         debug("Created panel with custom labels and decorations");
 
         // Setup event listeners
         setupTextareaListeners();
         setupKeyboardShortcut();
         debug("Set up event listeners");
+        initializeHighlighting();
 
         debug(
           "Enhanced initialization complete with theme and custom labels support",
@@ -73,10 +73,11 @@ function init() {
       .catch((err) => {
         console.error("Error loading custom labels/decorations:", err);
         // Create UI elements anyway as a fallback
-        const floatingButton = createFloatingButton();
-        const panel = createPanel();
+        createFloatingButton();
+        createPanel();
         setupTextareaListeners();
         setupKeyboardShortcut();
+        initializeHighlighting();
       });
   } catch (err) {
     console.error("Error initializing Conventional Comments:", err);

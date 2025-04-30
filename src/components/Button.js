@@ -1,6 +1,5 @@
 import { debug } from "../utils/debug";
 import state from "../state";
-import { makeDraggable } from "../utils/draggable";
 import { updateThemeIndicator } from "../utils/theme";
 import { applyButtonPosition, resetButtonPosition } from "../utils/storage";
 import { togglePanel } from "./Panel";

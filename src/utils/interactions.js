@@ -1,10 +1,5 @@
-import { debug } from "./debug";
 import state from "../state";
-import {
-  updateStatus,
-  updateActiveTextarea,
-  resetDecorationButtons,
-} from "../components/Panel";
+import { updateStatus, resetDecorationButtons } from "../components/Panel";
 import { togglePanel } from "../components/Panel";
 
 /**

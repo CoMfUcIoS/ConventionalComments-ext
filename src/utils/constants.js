@@ -1,5 +1,3 @@
-// Update your src/utils/constants.js file to include DEFAULT_LABELS and DEFAULT_DECORATIONS
-
 // Default conventional comment labels
 export const DEFAULT_LABELS = [
   "praise",
