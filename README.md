@@ -85,3 +85,7 @@ MIT License - see LICENSE file for details.
 
 - [Conventional Comments](https://conventionalcomments.org/) for the commenting standard
 - Icons from [feather icons](https://feathericons.com/)
+
+---
+If you find this project useful, please consider supporting it! I accept donations through either [BuyMeACoffee](https://buymeacoffee.com/CoMfUcIoS)  or GitHub Sponsors. 
+Your contributions help in maintaining and improving this extension. Thank you for your support! 
