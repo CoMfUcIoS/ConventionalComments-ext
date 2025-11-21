@@ -2,11 +2,18 @@ import { debug } from "./debug";
 import state from "../state";
 import { DEFAULT_LABELS } from "./constants";
 
+const ESCAPE_REGEX = /[.*+?^${}()|[\]\\]/g;
+
+function escapeRegExp(str) {
+  return str.replace(ESCAPE_REGEX, "\\$&");
+}
+
 function highlightConventionalComments(elements) {
   const labels = [...DEFAULT_LABELS, ...(state.customLabels || [])];
+  const escapedLabels = labels.map((label) => escapeRegExp(label));
 
   const commentRegex = new RegExp(
-    `(${labels.join("|")})(\\s*\\(([^)]*)\\))?:\\s*(.*)`,
+    `(${escapedLabels.join("|")})(\\s*\\(([^)]*)\\))?:\\s*(.*)`,
     "is",
   );
 
@@ -14,31 +21,70 @@ function highlightConventionalComments(elements) {
     // Normalize the comment text by trimming leading/trailing whitespace
     const trimmedText = comment.textContent.trim();
     const match = commentRegex.exec(trimmedText);
-    if (match) {
-      debug("Comment Found", comment);
 
-      const label = match[1];
-      const decoration = match[3] || "";
-      const restOfComment = match[4];
-      debug("Label", label);
-      debug("Decoration", decoration);
-      debug("Rest of comment", restOfComment);
-
-      // Determine CSS classes for label and decoration
-      const labelClass =
-        `cc-highlight-${label.toLowerCase()}` || "cc-highlight-default";
-      const decorationClass = decoration
-        ? `cc-highlight-${decoration.toLowerCase()}`
-        : "cc-highlight-default";
-
-      const highlightedLabel = `<span class="${labelClass}">${label}</span>`;
-      const highlightedDecoration = decoration
-        ? ` <span class="${decorationClass}">(${decoration})</span>`
-        : "";
-      comment.innerHTML = `${highlightedLabel}${highlightedDecoration}: ${restOfComment}`;
-    } else {
-      comment.innerHTML = comment.textContent;
+    if (!match) {
+      return;
     }
+
+    debug("Comment Found", comment);
+
+    const label = match[1];
+    const decorationRaw = match[3] || "";
+    const restOfComment = match[4] || "";
+
+    debug("Label", label);
+    debug("Decoration", decorationRaw);
+    debug("Rest of comment", restOfComment);
+
+    // Determine CSS class for the label
+    const labelClass =
+      `cc-highlight-${label.toLowerCase()}` || "cc-highlight-default";
+
+    // Split decorations on commas and normalize them
+    const decorations = decorationRaw
+      .split(",")
+      .map((d) => d.trim())
+      .filter(Boolean);
+
+    const fragment = document.createDocumentFragment();
+
+    // Label span
+    const labelSpan = document.createElement("span");
+    labelSpan.className = labelClass;
+    labelSpan.textContent = label;
+    fragment.appendChild(labelSpan);
+
+    // Decoration spans (if any)
+    if (decorations.length > 0) {
+      fragment.appendChild(document.createTextNode(" "));
+
+      decorations.forEach((decoration, index) => {
+        const normalizedDecoration = decoration
+          .toLowerCase()
+          .replace(/\s+/g, "-");
+
+        const decorationClass =
+          `cc-highlight-${normalizedDecoration}` || "cc-highlight-default";
+
+        if (index > 0) {
+          fragment.appendChild(document.createTextNode(" "));
+        }
+
+        const decorationSpan = document.createElement("span");
+        decorationSpan.className = decorationClass;
+        decorationSpan.textContent = `(${decoration})`;
+        fragment.appendChild(decorationSpan);
+      });
+    }
+
+    fragment.appendChild(document.createTextNode(": "));
+    fragment.appendChild(document.createTextNode(restOfComment));
+
+    // Replace existing content with the highlighted content
+    while (comment.firstChild) {
+      comment.removeChild(comment.firstChild);
+    }
+    comment.appendChild(fragment);
   });
 }
 
