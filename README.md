@@ -1,6 +1,6 @@
 # Conventional Comments for GitHub
 
-A browser extension that adds a floating panel for easily adding Conventional Comments to your GitHub pull requests, issues, and discussions.
+A browser extension that adds a floating panel for quickly inserting Conventional Comments on GitHub pull requests, issues, discussions, and inline review threads (Files tab included). Highlights existing comments that follow the convention.
 
 ## About Conventional Comments
 
@@ -22,15 +22,22 @@ Additional modifiers can specify the comment's importance:
 - **blocking:** must be resolved before merging
 - **if-minor:** only address if it's a simple change
 
+![Panel with labels, decorations, and inline highlights](docs/images/Screenshot%202025-11-22%20at%2017.48.03.png)
+
+![Highlights on inline diff comments](docs/images/Screenshot%202025-11-22%20at%2017.49.00.png)
+
+![Color picker dialog for labels/decorations](docs/images/Screenshot%202025-11-22%20at%2017.49.32.png)
+
+![Help guide and panel side-by-side](docs/images/Screenshot%202025-11-22%20at%2017.50.33.png)
+
 ## Features
 
-- Completely standalone interface - works with any GitHub UI
-- Floating button that's always accessible
-- Draggable panel that remembers its position
-- Works with all GitHub comment areas
-- Keyboard shortcut (Alt+C) to toggle the panel
-- Automatically detects the active text field
-- No network requests or data collection
+- Floating “CC” button + draggable panel that remembers its position; Alt+C toggles visibility.
+- Auto-detects the focused GitHub editor (conversation, inline diff comments, issues, discussions); updates when you change focus.
+- One-click label insertion; decoration toggles that update the existing label in place.
+- Custom labels/decorations with persistence, plus per-label/per-decoration highlight colors (🎨 button) with sane defaults.
+- Highlights Conventional Comments in Conversation and Files tabs using the same color palette.
+- Theme-aware UI (light/dark/system) with no external network requests or analytics.
 
 ## Installation
 
@@ -61,40 +68,52 @@ Additional modifiers can specify the comment's importance:
 6. The panel can be dragged anywhere on the screen
 7. Use Alt+C to quickly show/hide the panel
 
-## Development
-
-### Setup
-
-1. Clone this repository
-2. Make your changes to the files in the root directory
-3. Load the extension in your browser using the manual installation steps
-
-### Building
-
-To build a distributable version using **pnpm**:
+## Quick Start
 
 ```bash
-pnpm install
-pnpm build
+pnpm install          # install deps
+pnpm dev              # watch build for local development
+pnpm build            # production bundle to dist/
+pnpm debug            # dev build without watch
 ```
 
-This will:
+Load `dist/` as an unpacked extension (Chrome/Edge) or use `manifest.json` for Firefox temporary add-on. The build pipeline uses webpack (babel-loader, css-loader, terser, zip-webpack-plugin) to produce `dist/content.js`, copy CSS/icons/manifest, and zip as `dist/conventional-comments-extension.zip`.
 
-- Compile the content script into `dist/content.js`
-- Copy `manifest.json`, CSS files, and icons into `dist/`
-- Create a packaged zip file at:
+## Usage
 
-```text
-dist/conventional-comments-extension.zip
+1. Click in any GitHub comment box; the panel tracks the active field. 2) Toggle with Alt+C or the “CC” button. 3) Pick a label; add decorations as needed—chips update in-place. 4) Customize labels/decorations or their highlight colors via the “+” and 🎨 controls. 5) Drag the panel; position and expansion state persist.
+
+## Architecture
+
+- Entry: `src/index.js` initializes theme, custom data, focus listeners, highlighting, and panel/button creation.
+- UI: `src/components/` (Panel, Button, HelpDialog, ThemeSwitcher, CustomLabelsManager) plus `styles.css` and companion CSS files.
+- State/Utilities: `src/state.js`, `src/utils/` (storage for persistence, highlight for comment coloring, theme helpers, interactions, constants).
+- Build: `webpack.config.js` bundles `src/content.js` (imports `src/index.js`).
+- Distribution: artifacts live in `dist/` after build.
+
+```mermaid
+flowchart TD
+  A(content.js) --> B(index.js)
+  B --> C[state.js]
+  B --> D[storage utils]
+  B --> E[theme utils]
+  B --> F[highlight utils]
+  B --> G[Panel/Button components]
+  G --> H[CustomLabelsManager]
+  G --> I[HelpDialog + ThemeSwitcher]
+  F -->|DOM scan + MutationObserver| J[GitHub comment DOM]
+  D -->|persist| C
+  H -->|custom labels/decorations/colors| C
 ```
 
-You can load the unpacked extension from the `dist/` directory for local testing,
-or use the generated zip as a distributable package.
+## Permissions & Privacy
 
+- Permissions: `storage` plus content scripts scoped to `github.com/*` pull requests, issues, discussions, and commits. No host permissions beyond GitHub; no network requests or external analytics.
+- Data: labels, decorations, colors, and UI positions are stored locally via `chrome.storage`/`localStorage`.
 
 ## License
 
-MIT License - see LICENSE file for details.
+GPL-3.0-or-later - see [LICENSE](./LICENSE) for full terms.
 
 ## Credits
 
@@ -102,5 +121,6 @@ MIT License - see LICENSE file for details.
 - Icons from [feather icons](https://feathericons.com/)
 
 ---
-If you find this project useful, please consider supporting it! I accept donations through either [BuyMeACoffee](https://buymeacoffee.com/CoMfUcIoS)  or GitHub Sponsors. 
-Your contributions help in maintaining and improving this extension. Thank you for your support! 
+
+If you find this project useful, please consider supporting it! I accept donations through either [BuyMeACoffee](https://buymeacoffee.com/CoMfUcIoS) or [GitHub Sponsors](https://github.com/sponsors/CoMfUcIoS).
+Your contributions help in maintaining and improving this extension. Thank you for your support!
