@@ -21,11 +21,6 @@ export const DEFAULT_DECORATIONS = [
   "test",
 ];
 
-// Use these arrays for the LABELS and DECORATIONS exports
-export const LABELS = DEFAULT_LABELS;
-
-export const DECORATIONS = DEFAULT_DECORATIONS;
-
 // Label descriptions for tooltips
 export const LABEL_INFO = {
   praise:

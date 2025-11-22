@@ -71,11 +71,26 @@ Additional modifiers can specify the comment's importance:
 
 ### Building
 
-To build a distributable version:
+To build a distributable version using **pnpm**:
 
+```bash
+pnpm install
+pnpm build
 ```
-zip -r conventional-comments.zip manifest.json content.js styles.css icons
+
+This will:
+
+- Compile the content script into `dist/content.js`
+- Copy `manifest.json`, CSS files, and icons into `dist/`
+- Create a packaged zip file at:
+
+```text
+dist/conventional-comments-extension.zip
 ```
+
+You can load the unpacked extension from the `dist/` directory for local testing,
+or use the generated zip as a distributable package.
+
 
 ## License
 
