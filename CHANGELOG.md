@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/CoMfUcIoS/ConventionalComments-ext/compare/v2.1.0...v2.2.0) (2025-11-22)
+
+
+### Features
+
+* **a11y:** improve label and decoration accessibility ([46b8e72](https://github.com/CoMfUcIoS/ConventionalComments-ext/commit/46b8e72e8966e7b8a29fc275b561809791e5dc72))
+
 ## [2.1.0](https://github.com/CoMfUcIoS/ConventionalComments-ext/compare/v2.0.0...v2.1.0) (2025-11-22)
 
 
