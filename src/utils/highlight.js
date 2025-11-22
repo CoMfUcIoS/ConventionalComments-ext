@@ -165,7 +165,7 @@ function highlightConventionalComments(elements) {
           : "cc-highlight-default";
 
         if (index > 0) {
-          group.appendChild(document.createTextNode(" "));
+          group.appendChild(document.createTextNode(", "));
         }
 
         const decorationSpan = document.createElement("span");
@@ -197,6 +197,17 @@ function highlightConventionalComments(elements) {
 }
 
 function observeDOMChanges() {
+  let rerunTimeout = null;
+  function scheduleGlobalHighlight() {
+    if (rerunTimeout) return;
+    rerunTimeout = setTimeout(() => {
+      rerunTimeout = null;
+      highlightConventionalComments(
+        document.querySelectorAll(COMMENT_BODY_SELECTOR),
+      );
+    }, 50);
+  }
+
   const observer = new MutationObserver((mutations) => {
     const commentElements = new Set();
 
@@ -213,7 +224,16 @@ function observeDOMChanges() {
             }
           }
         });
+      } else if (mutation.type === "characterData") {
+        const owner =
+          mutation.target.parentElement &&
+          mutation.target.parentElement.closest(COMMENT_BODY_SELECTOR);
+        if (owner) {
+          commentElements.add(owner);
+        }
       }
+      // Always queue a safety pass to catch PJAX/partial renders (e.g., conversation edits)
+      scheduleGlobalHighlight();
     });
 
     if (commentElements.size > 0) {
@@ -221,7 +241,11 @@ function observeDOMChanges() {
     }
   });
 
-  observer.observe(document.body, { childList: true, subtree: true });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
 }
 
 export function initializeHighlighting() {

@@ -1268,7 +1268,7 @@ html[data-theme="dark"]
 .cc-decoration-group {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .cc-decoration-chip {
@@ -1276,7 +1276,8 @@ html[data-theme="dark"]
   border-radius: 999px;
   font-weight: 650;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  margin: 0 1px;
 }
 
 /* Default styles for user-defined labels and decorators */

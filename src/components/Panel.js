@@ -570,6 +570,14 @@ export function insertLabel(label) {
   state.activeDecorations.clear();
   resetDecorationButtons();
 
+  // Visually and semantically mark the chosen label as active
+  resetLabelButtons();
+  const button = findLabelButton(label);
+  if (button) {
+    button.classList.add("active");
+    button.setAttribute("aria-pressed", "true");
+  }
+
   // Trigger input event to ensure GitHub registers the change
   const inputEvent = new Event("input", { bubbles: true });
   textarea.dispatchEvent(inputEvent);
@@ -608,9 +616,11 @@ export function toggleDecoration(decoration, button) {
   if (isActive) {
     state.activeDecorations.delete(decoration);
     button.classList.remove("active");
+    button.setAttribute("aria-pressed", "false");
   } else {
     state.activeDecorations.add(decoration);
     button.classList.add("active");
+    button.setAttribute("aria-pressed", "true");
   }
 
   // Update textarea
