@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Conventional Comments for GitHub",
   "version": "1.4.0",
   "description": "Adds a floating panel for Conventional Comments on GitHub Pull Requests with theme support and custom labels",
@@ -23,14 +23,8 @@
         "styles.css",
         "help-dialog.css",
         "custom-labels.css"
-      ],
-      "run_at": "document_end"
+      ]
     }
   ],
-  "permissions": ["storage"],
-  "applications": {
-    "gecko": {
-      "id": "conventional-comments@studio110.eu"
-    }
-  }
+  "permissions": ["storage"]
 }

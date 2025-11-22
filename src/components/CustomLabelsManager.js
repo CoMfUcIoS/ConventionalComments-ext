@@ -401,7 +401,7 @@ function updateItemButtons(type) {
   // Use the explicit IDs we've added to find the correct container
   const containerId =
     type === "label" ? "cc-labels-container" : "cc-decorations-container";
-  const container = document.getElementById(containerId);
+  let container = document.getElementById(containerId);
 
   if (!container) {
     debug(`Could not find ${type} buttons container with ID: ${containerId}`);

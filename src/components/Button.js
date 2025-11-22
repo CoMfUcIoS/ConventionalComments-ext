@@ -1,7 +1,11 @@
 import { debug } from "../utils/debug";
 import state from "../state";
 import { updateThemeIndicator } from "../utils/theme";
-import { applyButtonPosition, resetButtonPosition } from "../utils/storage";
+import {
+  applyButtonPosition,
+  resetButtonPosition,
+  saveButtonPosition,
+} from "../utils/storage";
 import { togglePanel } from "./Panel";
 
 /**
@@ -69,8 +73,8 @@ export function createFloatingButton() {
   // Apply saved position
   applyButtonPosition();
 
-  // Set up periodic update of the theme indicator color (in case theme changes)
-  setInterval(() => updateThemeIndicator(themeIndicator), 1000);
+  // Initial theme indicator update; subsequent updates are driven by theme changes
+  updateThemeIndicator(themeIndicator);
 
   // IMPORTANT: Make the button draggable directly here
   // This solves circular dependency issues
@@ -200,7 +204,7 @@ function makeButtonDraggable(button) {
     button.classList.remove("cc-dragging");
 
     if (isDragging && hasMoved) {
-      // If we were dragging, save the position
+      // If we were dragging, save the position via shared storage helper
       saveButtonPosition();
 
       if (e) {
@@ -213,11 +217,5 @@ function makeButtonDraggable(button) {
     debug("Button drag stopped");
   }
 
-  // Add reset button functionality
-  function saveButtonPosition() {
-    if (typeof chrome !== "undefined" && chrome.storage) {
-      chrome.storage.local.set({ ccButtonPosition: state.buttonPosition });
-      debug("Saved button position:", state.buttonPosition);
-    }
-  }
+
 }

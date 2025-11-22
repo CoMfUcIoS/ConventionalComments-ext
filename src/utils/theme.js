@@ -6,9 +6,12 @@ import { loadThemePreference, saveThemePreference } from "./storage";
  * @returns {string} The current theme ID
  */
 export function getCurrentTheme() {
-  const savedTheme = localStorage.getItem("cc-theme");
-  // Fallback to system if nothing saved yet
-  return savedTheme || "system";
+  try {
+    const savedTheme = localStorage.getItem("cc-theme");
+    return savedTheme || "system";
+  } catch {
+    return "system";
+  }
 }
 
 /**

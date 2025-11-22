@@ -6,14 +6,19 @@ import state from "../state";
  * @param {string} themeId The theme ID to save
  */
 export function saveThemePreference(themeId) {
+  // Always keep a localStorage copy so getCurrentTheme() can read synchronously
+  try {
+    localStorage.setItem("cc-theme", themeId);
+  } catch (e) {
+    debug("Failed to save theme to localStorage:", e);
+  }
+
   if (typeof chrome !== "undefined" && chrome.storage) {
     chrome.storage.local.set({ ccTheme: themeId }, function () {
-      debug(`Theme preference saved: ${themeId}`);
+      debug(`Theme preference saved (storage & localStorage): ${themeId}`);
     });
   } else {
-    // Fallback to localStorage for debugging or if storage API unavailable
-    localStorage.setItem("cc-theme", themeId);
-    debug(`Theme preference saved to localStorage: ${themeId}`);
+    debug(`Theme preference saved to localStorage only: ${themeId}`);
   }
 }
 
