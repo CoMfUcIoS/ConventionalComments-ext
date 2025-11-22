@@ -240,6 +240,8 @@ export function createPanel() {
     button.textContent = label;
     button.dataset.label = label;
     button.className = "cc-label-btn";
+    button.setAttribute("aria-pressed", "false");
+    button.setAttribute("aria-label", `Insert label ${label}`);
 
     const color = getLabelColor(label);
     if (color) {
@@ -281,11 +283,13 @@ export function createPanel() {
   decorationsContainer.id = "cc-decorations-container";
 
   const decorationsToUse = state.customDecorations || DEFAULT_DECORATIONS;
-  decorationsToUse.forEach((decoration) => {
+    decorationsToUse.forEach((decoration) => {
     const button = document.createElement("button");
     button.textContent = decoration;
     button.dataset.decoration = decoration;
     button.className = "cc-decoration-btn";
+    button.setAttribute("aria-pressed", "false");
+    button.setAttribute("aria-label", `Toggle decoration ${decoration}`);
 
     const color = getDecorationColor(decoration);
     if (color) {
@@ -653,6 +657,7 @@ export function resetDecorationButtons() {
   const buttons = state.panel.querySelectorAll(".cc-decoration-btn");
   buttons.forEach((button) => {
     button.classList.remove("active");
+    button.setAttribute("aria-pressed", "false");
   });
 }
 
@@ -662,6 +667,7 @@ function resetLabelButtons() {
   const buttons = state.panel.querySelectorAll(".cc-label-btn");
   buttons.forEach((button) => {
     button.classList.remove("active");
+    button.setAttribute("aria-pressed", "false");
   });
 }
 
@@ -709,6 +715,7 @@ function syncPanelWithTextarea(textarea) {
   const labelButton = findLabelButton(label);
   if (labelButton) {
     labelButton.classList.add("active");
+    labelButton.setAttribute("aria-pressed", "true");
   }
 
   const decorations = decorationsRaw
@@ -721,6 +728,7 @@ function syncPanelWithTextarea(textarea) {
     if (button) {
       state.activeDecorations.add(button.dataset.decoration || decoration);
       button.classList.add("active");
+      button.setAttribute("aria-pressed", "true");
     }
   });
 }
