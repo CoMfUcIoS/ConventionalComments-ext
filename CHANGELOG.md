@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/CoMfUcIoS/ConventionalComments-ext/compare/v2.0.0...v2.1.0) (2025-11-22)
+
+
+### Features
+
+* **a11y:** add aria attributes to panel buttons ([912473f](https://github.com/CoMfUcIoS/ConventionalComments-ext/commit/912473f7e7648036343285dc3954d6f614da2e6f))
+
 ## [2.0.0](https://github.com/CoMfUcIoS/ConventionalComments-ext/compare/v1.0.0...v2.0.0) (2025-11-22)
 
 

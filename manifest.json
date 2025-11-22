@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Conventional Comments for GitHub",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Adds a floating panel for Conventional Comments on GitHub Pull Requests with theme support and custom labels",
   "icons": {
     "16": "icons/icon-16.png",
