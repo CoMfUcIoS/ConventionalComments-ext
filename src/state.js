@@ -12,6 +12,8 @@ const state = {
   originalDecorations: null,
   customLabels: null,
   customDecorations: null,
+  customLabelColors: {},
+  customDecorationColors: {},
 };
 
 export default state;

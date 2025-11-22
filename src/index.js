@@ -12,6 +12,8 @@ import {
   loadCustomDecorations,
   saveCustomLabels,
   saveCustomDecorations,
+  loadLabelColors,
+  loadDecorationColors,
 } from "./utils/storage";
 import { initializeCustomLabelsManager } from "./components/CustomLabelsManager";
 import { DEFAULT_LABELS, DEFAULT_DECORATIONS } from "./utils/constants";
@@ -93,9 +95,9 @@ function init() {
  */
 function loadExtensionData() {
   return new Promise((resolve, reject) => {
-    // Use a counter to track when both loads are complete
+    // Use a counter to track when all loads are complete
     let loadCount = 0;
-    const totalLoads = 2;
+    const totalLoads = 4;
 
     // Function to check if all loads are complete
     function checkAllLoaded() {
@@ -138,6 +140,18 @@ function loadExtensionData() {
           `No custom decorations found, initialized with ${state.customDecorations.length} default decorations`,
         );
       }
+      checkAllLoaded();
+    });
+
+    // Load label colors
+    loadLabelColors(function () {
+      debug("Loaded custom label colors");
+      checkAllLoaded();
+    });
+
+    // Load decoration colors
+    loadDecorationColors(function () {
+      debug("Loaded custom decoration colors");
       checkAllLoaded();
     });
 

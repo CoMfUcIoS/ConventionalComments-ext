@@ -1,7 +1,16 @@
 import { debug } from "../utils/debug";
 import state from "../state";
-import { saveCustomLabels, saveCustomDecorations } from "../utils/storage";
-import { DEFAULT_LABELS, DEFAULT_DECORATIONS } from "../utils/constants";
+import {
+  saveCustomLabels,
+  saveCustomDecorations,
+} from "../utils/storage";
+import {
+  DEFAULT_LABELS,
+  DEFAULT_DECORATIONS,
+  DEFAULT_LABEL_COLORS,
+  DEFAULT_DECORATION_COLORS,
+} from "../utils/constants";
+import { getReadableTextColor } from "../utils/color";
 
 /**
  * Create and inject a "+" button for the labels section
@@ -438,6 +447,18 @@ function updateItemButtons(type) {
     button.textContent = item;
     button.dataset[type] = item;
     button.className = type === "label" ? "cc-label-btn" : "cc-decoration-btn";
+
+    const key = item.toLowerCase();
+    const color =
+      type === "label"
+        ? state.customLabelColors[key] || DEFAULT_LABEL_COLORS[key]
+        : state.customDecorationColors[key] || DEFAULT_DECORATION_COLORS[key];
+
+    if (color) {
+      button.style.backgroundColor = color;
+      button.style.color = getReadableTextColor(color);
+      button.style.borderColor = color;
+    }
 
     // Add event listener
     if (type === "label") {

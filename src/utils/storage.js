@@ -41,6 +41,24 @@ export function loadThemePreference(callback) {
   }
 }
 
+function setLocalStorageJSON(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    debug(`Failed to save ${key} to localStorage:`, e);
+  }
+}
+
+function getLocalStorageJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    debug(`Failed to read ${key} from localStorage:`, e);
+    return fallback;
+  }
+}
+
 /**
  * Try to load saved positions from storage
  */
@@ -97,6 +115,62 @@ export function loadSavedPosition() {
     state.helpDialogPosition = { top: "50%", left: "50%" };
     state.isExpanded = true;
     debug("No storage API available, using defaults");
+  }
+}
+
+export function saveLabelColors(colors) {
+  state.customLabelColors = colors;
+
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.set({ ccLabelColors: colors });
+    debug("Saved label colors", colors);
+  } else {
+    setLocalStorageJSON("cc-label-colors", colors);
+    debug("Saved label colors to localStorage", colors);
+  }
+}
+
+export function saveDecorationColors(colors) {
+  state.customDecorationColors = colors;
+
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.set({ ccDecorationColors: colors });
+    debug("Saved decoration colors", colors);
+  } else {
+    setLocalStorageJSON("cc-decoration-colors", colors);
+    debug("Saved decoration colors to localStorage", colors);
+  }
+}
+
+export function loadLabelColors(callback) {
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.get("ccLabelColors", function (result) {
+      const colors = result.ccLabelColors || {};
+      state.customLabelColors = colors;
+      debug("Loaded label colors", colors);
+      callback(colors);
+    });
+  } else {
+    const colors = getLocalStorageJSON("cc-label-colors", {});
+    state.customLabelColors = colors;
+    debug("Loaded label colors from localStorage", colors);
+    callback(colors);
+  }
+}
+
+export function loadDecorationColors(callback) {
+  if (typeof chrome !== "undefined" && chrome.storage) {
+    chrome.storage.local.get("ccDecorationColors", function (result) {
+      const colors = result.ccDecorationColors || {};
+      state.customDecorationColors = colors;
+      debug("Loaded decoration colors", colors);
+      callback(colors);
+    });
+  } else {
+    const colors = getLocalStorageJSON("cc-decoration-colors", {});
+    state.customDecorationColors = colors;
+    debug("Loaded decoration colors from localStorage", colors);
+    callback(colors);
   }
 }
 

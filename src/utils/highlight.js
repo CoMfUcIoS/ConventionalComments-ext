@@ -1,6 +1,12 @@
 import { debug } from "./debug";
 import state from "../state";
-import { DEFAULT_LABELS, DEFAULT_DECORATIONS } from "./constants";
+import {
+  DEFAULT_LABELS,
+  DEFAULT_DECORATIONS,
+  DEFAULT_LABEL_COLORS,
+  DEFAULT_DECORATION_COLORS,
+} from "./constants";
+import { getReadableTextColor } from "./color";
 
 const ESCAPE_REGEX = /[.*+?^${}()|[\]\\]/g;
 
@@ -17,6 +23,18 @@ const NORMALIZED_DEFAULT_LABELS = DEFAULT_LABELS.map((label) =>
 const NORMALIZED_DEFAULT_DECORATIONS = DEFAULT_DECORATIONS.map((decoration) =>
   decoration.toLowerCase().replace(/\s+/g, "-"),
 );
+
+function getLabelColor(label) {
+  const key = label.toLowerCase();
+  const custom = (state.customLabelColors || {})[key];
+  return custom || DEFAULT_LABEL_COLORS[key];
+}
+
+function getDecorationColor(decoration) {
+  const key = decoration.toLowerCase();
+  const custom = (state.customDecorationColors || {})[key];
+  return custom || DEFAULT_DECORATION_COLORS[key];
+}
 
 const COMMENT_BODY_SELECTOR = [
   ".comment-body",
@@ -100,11 +118,22 @@ function highlightConventionalComments(elements) {
     const labelSpan = document.createElement("span");
     labelSpan.className = labelClass;
     labelSpan.textContent = label;
+    labelSpan.dataset.ccLabel = normalizedLabel;
+
+    const labelColor = getLabelColor(label);
+    if (labelColor) {
+      labelSpan.style.backgroundColor = labelColor;
+      labelSpan.style.color = getReadableTextColor(labelColor);
+    }
     fragment.appendChild(labelSpan);
 
     // Decoration spans (if any)
     if (decorations.length > 0) {
       fragment.appendChild(document.createTextNode(" "));
+
+      const group = document.createElement("span");
+      group.className = "cc-decoration-group";
+      group.appendChild(document.createTextNode("("));
 
       decorations.forEach((decoration, index) => {
         const normalizedDecoration = decoration
@@ -119,14 +148,24 @@ function highlightConventionalComments(elements) {
           : "cc-highlight-default";
 
         if (index > 0) {
-          fragment.appendChild(document.createTextNode(" "));
+          group.appendChild(document.createTextNode(" "));
         }
 
         const decorationSpan = document.createElement("span");
-        decorationSpan.className = decorationClass;
-        decorationSpan.textContent = `(${decoration})`;
-        fragment.appendChild(decorationSpan);
+        decorationSpan.className = `${decorationClass} cc-decoration-chip`;
+        decorationSpan.textContent = decoration;
+        decorationSpan.dataset.ccDecoration = normalizedDecoration;
+
+        const decorationColor = getDecorationColor(decoration);
+        if (decorationColor) {
+          decorationSpan.style.backgroundColor = decorationColor;
+          decorationSpan.style.color = getReadableTextColor(decorationColor);
+        }
+        group.appendChild(decorationSpan);
       });
+
+      group.appendChild(document.createTextNode(")"));
+      fragment.appendChild(group);
     }
 
     fragment.appendChild(document.createTextNode(": "));

@@ -20,6 +20,29 @@ export const DEFAULT_DECORATIONS = [
   "test",
 ];
 
+// Default highlight colors (backgrounds) for labels and decorations
+export const DEFAULT_LABEL_COLORS = {
+  praise: "#d9f1ed",
+  nitpick: "#fff0d9",
+  suggestion: "#e3f4e8",
+  issue: "#fbe4e4",
+  todo: "#e9e2f7",
+  question: "#e3ecff",
+  thought: "#f4e7f6",
+  chore: "#fff5dd",
+  note: "#e6f2ff",
+};
+
+export const DEFAULT_DECORATION_COLORS = {
+  "non-blocking": "#e4f3e8",
+  blocking: "#fbe0e0",
+  "if-minor": "#ece3f7",
+  ux: "#e6f0ff",
+  security: "#fbe0e0",
+  test: "#e9e2f7",
+  typo: "#ececec",
+};
+
 
 // Label descriptions for tooltips
 export const LABEL_INFO = {

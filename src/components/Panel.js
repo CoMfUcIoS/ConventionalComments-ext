@@ -5,6 +5,8 @@ import {
   DEFAULT_DECORATIONS,
   LABEL_INFO,
   DECORATION_INFO,
+  DEFAULT_LABEL_COLORS,
+  DEFAULT_DECORATION_COLORS,
 } from "../utils/constants";
 import {
   saveExpandState,
@@ -12,9 +14,12 @@ import {
   applyPanelPosition,
   resetPanelPosition,
   savePanelPosition,
+  saveLabelColors,
+  saveDecorationColors,
 } from "../utils/storage";
 import { showHelp } from "./HelpDialog";
 import { addThemeSwitcher } from "./ThemeSwitcher";
+import { getReadableTextColor } from "../utils/color";
 
 const ACTIVE_TEXTAREA_CLASS = "cc-active-textarea";
 
@@ -63,6 +68,26 @@ function isGithubCommentTextarea(textarea) {
   return false;
 }
 
+function getLabelColor(label) {
+  const key = (label || "").toLowerCase();
+  return (
+    (state.customLabelColors && state.customLabelColors[key]) ||
+    DEFAULT_LABEL_COLORS[key]
+  );
+}
+
+function getDecorationColor(decoration) {
+  const key = (decoration || "").toLowerCase();
+  return (
+    (state.customDecorationColors && state.customDecorationColors[key]) ||
+    DEFAULT_DECORATION_COLORS[key]
+  );
+}
+
+function getHighlightTextColor(bgColor) {
+  return getReadableTextColor(bgColor);
+}
+
 function setActiveTextarea(next) {
   if (state.activeTextarea === next) return;
 
@@ -105,6 +130,11 @@ export function createPanel() {
 
   const controls = document.createElement("div");
   controls.classList.add("cc-panel-controls");
+
+  const colorButton = document.createElement("button");
+  colorButton.textContent = "🎨";
+  colorButton.classList.add("cc-control-button");
+  colorButton.title = "Highlight colors";
 
   // Create reset position button
   const resetPositionBtn = document.createElement("button");
@@ -153,6 +183,13 @@ export function createPanel() {
     debug("Close button clicked");
   });
 
+  colorButton.addEventListener("click", (e) => {
+    e.stopPropagation();
+    showColorDialog();
+    debug("Color dialog opened");
+  });
+
+  controls.appendChild(colorButton);
   controls.appendChild(resetPositionBtn);
   controls.appendChild(helpButton);
   controls.appendChild(toggleButton);
@@ -185,6 +222,13 @@ export function createPanel() {
     button.textContent = label;
     button.dataset.label = label;
     button.className = "cc-label-btn";
+
+    const color = getLabelColor(label);
+    if (color) {
+      button.style.backgroundColor = color;
+      button.style.color = getReadableTextColor(color);
+      button.style.borderColor = color;
+    }
 
     // Add tooltip
     if (LABEL_INFO[label]) {
@@ -224,6 +268,13 @@ export function createPanel() {
     button.textContent = decoration;
     button.dataset.decoration = decoration;
     button.className = "cc-decoration-btn";
+
+    const color = getDecorationColor(decoration);
+    if (color) {
+      button.style.backgroundColor = color;
+      button.style.color = getReadableTextColor(color);
+      button.style.borderColor = color;
+    }
 
     // Add tooltip
     if (DECORATION_INFO[decoration]) {
@@ -275,6 +326,8 @@ export function createPanel() {
 
   // Add theme switcher - only add it once
   addThemeSwitcher();
+
+  applyColorsToButtons();
 
   debug(
     "Conventional comments panel created with customization buttons and explicit IDs",
@@ -653,6 +706,176 @@ function syncPanelWithTextarea(textarea) {
       button.classList.add("active");
     }
   });
+}
+
+function applyCustomColorsToHighlights() {
+  const labelSpans = document.querySelectorAll("span[data-cc-label]");
+  labelSpans.forEach((span) => {
+    const color = getLabelColor(span.dataset.ccLabel);
+    if (color) {
+      span.style.backgroundColor = color;
+      span.style.color = getHighlightTextColor(color);
+    }
+  });
+
+  const decorationSpans = document.querySelectorAll("span[data-cc-decoration]");
+  decorationSpans.forEach((span) => {
+    const color = getDecorationColor(span.dataset.ccDecoration);
+    if (color) {
+      span.style.backgroundColor = color;
+      span.style.color = getHighlightTextColor(color);
+    }
+  });
+}
+
+function setItemColor(type, name, color) {
+  const key = (name || "").toLowerCase();
+  if (type === "label") {
+    state.customLabelColors[key] = color;
+    saveLabelColors(state.customLabelColors);
+  } else {
+    state.customDecorationColors[key] = color;
+    saveDecorationColors(state.customDecorationColors);
+  }
+
+  applyColorsToButtons();
+  applyCustomColorsToHighlights();
+}
+
+function applyColorsToButtons() {
+  if (!state.panel) return;
+
+  const labelButtons = state.panel.querySelectorAll(".cc-label-btn");
+  labelButtons.forEach((button) => {
+    const label = (button.dataset.label || button.textContent || "").toLowerCase();
+    const color = getLabelColor(label);
+    if (color) {
+      button.style.backgroundColor = color;
+      button.style.color = getReadableTextColor(color);
+      button.style.borderColor = color;
+    }
+  });
+
+  const decorationButtons = state.panel.querySelectorAll(".cc-decoration-btn");
+  decorationButtons.forEach((button) => {
+    const decoration = (
+      button.dataset.decoration || button.textContent || ""
+    ).toLowerCase();
+    const color = getDecorationColor(decoration);
+    if (color) {
+      button.style.backgroundColor = color;
+      button.style.color = getReadableTextColor(color);
+      button.style.borderColor = color;
+    }
+  });
+}
+
+function buildColorRow(type, name) {
+  const row = document.createElement("div");
+  row.className = "cc-color-row";
+
+  const label = document.createElement("span");
+  label.textContent = name;
+  label.className = "cc-color-row-label";
+
+  const input = document.createElement("input");
+  input.type = "color";
+  input.className = "cc-color-input";
+
+  const key = name.toLowerCase();
+  const defaultColor =
+    type === "label" ? DEFAULT_LABEL_COLORS[key] : DEFAULT_DECORATION_COLORS[key];
+  const currentColor =
+    type === "label"
+      ? state.customLabelColors[key] || defaultColor
+      : state.customDecorationColors[key] || defaultColor;
+
+  input.value = currentColor || "#ffffff";
+
+  input.addEventListener("input", (e) => {
+    const newColor = e.target.value;
+    setItemColor(type, name, newColor);
+  });
+
+  row.appendChild(label);
+  row.appendChild(input);
+
+  return row;
+}
+
+function showColorDialog() {
+  const existing = document.getElementById("cc-color-dialog");
+  if (existing) {
+    existing.remove();
+  }
+
+  const dialog = document.createElement("div");
+  dialog.id = "cc-color-dialog";
+  dialog.className = "cc-color-dialog";
+
+  const content = document.createElement("div");
+  content.className = "cc-color-dialog-content";
+
+  const title = document.createElement("h3");
+  title.textContent = "Highlight Colors";
+  content.appendChild(title);
+
+  const description = document.createElement("p");
+  description.textContent =
+    "Pick custom colors for labels and decorations. Defaults stay in place if you clear a value.";
+  content.appendChild(description);
+
+  const labelSection = document.createElement("div");
+  labelSection.className = "cc-color-section";
+  const labelHeading = document.createElement("h4");
+  labelHeading.textContent = "Labels";
+  labelSection.appendChild(labelHeading);
+
+  (state.customLabels || DEFAULT_LABELS).forEach((label) => {
+    labelSection.appendChild(buildColorRow("label", label));
+  });
+
+  const decorationSection = document.createElement("div");
+  decorationSection.className = "cc-color-section";
+  const decorationHeading = document.createElement("h4");
+  decorationHeading.textContent = "Decorations";
+  decorationSection.appendChild(decorationHeading);
+
+  (state.customDecorations || DEFAULT_DECORATIONS).forEach((decoration) => {
+    decorationSection.appendChild(buildColorRow("decoration", decoration));
+  });
+
+  const actions = document.createElement("div");
+  actions.className = "cc-color-actions";
+
+  const closeButton = document.createElement("button");
+  closeButton.textContent = "Close";
+  closeButton.className = "cc-modal-button";
+  closeButton.addEventListener("click", () => dialog.remove());
+
+  const resetButton = document.createElement("button");
+  resetButton.textContent = "Reset to defaults";
+  resetButton.className = "cc-modal-button cc-modal-secondary";
+  resetButton.addEventListener("click", () => {
+    state.customLabelColors = {};
+    state.customDecorationColors = {};
+    saveLabelColors({});
+    saveDecorationColors({});
+    updateItemButtons("label");
+    updateItemButtons("decoration");
+    applyCustomColorsToHighlights();
+    showColorDialog();
+  });
+
+  actions.appendChild(resetButton);
+  actions.appendChild(closeButton);
+
+  content.appendChild(labelSection);
+  content.appendChild(decorationSection);
+  content.appendChild(actions);
+
+  dialog.appendChild(content);
+  document.body.appendChild(dialog);
 }
 
 /**
