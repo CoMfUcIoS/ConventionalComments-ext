@@ -16,6 +16,66 @@ import {
 import { showHelp } from "./HelpDialog";
 import { addThemeSwitcher } from "./ThemeSwitcher";
 
+const ACTIVE_TEXTAREA_CLASS = "cc-active-textarea";
+
+/**
+ * Check if a textarea is one of GitHub's comment editors.
+ * Supports both the classic and the new React-based PR UI.
+ * @param {HTMLTextAreaElement | Element | null} textarea
+ * @returns {boolean}
+ */
+function isGithubCommentTextarea(textarea) {
+  if (!textarea || textarea.tagName !== "TEXTAREA") return false;
+
+  // Make sure the node is still in the document
+  if (!textarea.isConnected) return false;
+
+  // Ignore hidden / non-visible textareas (React sometimes mounts hidden clones)
+  const style = window.getComputedStyle(textarea);
+  if (style.display === "none" || style.visibility === "hidden") {
+    return false;
+  }
+
+  const ariaLabel = (textarea.getAttribute("aria-label") || "").toLowerCase();
+  const placeholder = (textarea.getAttribute("placeholder") || "").toLowerCase();
+
+  // New React-based comment editors in PRs:
+  // they currently use aria-label="Markdown value" and a friendly placeholder.
+  if (ariaLabel === "markdown value") {
+    return true;
+  }
+  if (placeholder.includes("add your comment here")) {
+    return true;
+  }
+
+  // Classic GitHub comment editors (old DOM)
+  if (
+    textarea.closest(".js-previewable-comment-form") ||
+    textarea.closest("tab-container") ||
+    textarea.id === "new_comment_field" ||
+    textarea.classList.contains("js-comment-field")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function setActiveTextarea(next) {
+  if (state.activeTextarea === next) return;
+
+  if (state.activeTextarea && state.activeTextarea.classList) {
+    state.activeTextarea.classList.remove(ACTIVE_TEXTAREA_CLASS);
+  }
+
+  state.activeTextarea = next || null;
+
+  if (state.activeTextarea && state.activeTextarea.classList) {
+    state.activeTextarea.classList.add(ACTIVE_TEXTAREA_CLASS);
+  }
+}
+
+
 /**
  * Create and inject the floating panel
  * @returns {HTMLElement} The created panel
@@ -518,28 +578,37 @@ export function updateActiveTextarea() {
   // Find active textarea (the one that has focus or was last focused)
   const activeElement = document.activeElement;
 
-  if (activeElement && activeElement.tagName === "TEXTAREA") {
-    state.activeTextarea = activeElement;
+  if (isGithubCommentTextarea(activeElement)) {
+    // Currently focused comment textarea
+    setActiveTextarea(activeElement);
     updateStatus(`Active: ${getTextareaName(activeElement)}`);
     debug("Active textarea:", getTextareaName(activeElement));
-  } else {
-    // Find textareas in the page that look like GitHub comment fields
-    const textareas = Array.from(document.querySelectorAll("textarea")).filter(
-      (textarea) =>
-        textarea.closest(".js-previewable-comment-form") ||
-        textarea.closest("tab-container") ||
-        textarea.id === "new_comment_field" ||
-        textarea.classList.contains("js-comment-field"),
+  } else if (isGithubCommentTextarea(state.activeTextarea)) {
+    // No new focus, but we still have a valid textarea from before
+    updateStatus(`Active: ${getTextareaName(state.activeTextarea)}`);
+    debug(
+      "Using existing active textarea:",
+      getTextareaName(state.activeTextarea),
     );
+  } else {
+    // Find all visible GitHub comment textareas (classic + React UI)
+    const textareas = Array.from(
+      document.querySelectorAll("textarea"),
+    ).filter((ta) => isGithubCommentTextarea(ta));
 
     if (textareas.length > 0) {
-      // Default to the main comment field if available
+      // Prefer the main PR comment field if available (classic layout)
       const mainComment = textareas.find((ta) => ta.id === "new_comment_field");
-      state.activeTextarea = mainComment || textareas[0];
-      updateStatus(`Default: ${getTextareaName(state.activeTextarea)}`);
-      debug("Default textarea:", getTextareaName(state.activeTextarea));
+
+      // Otherwise pick the last one – inline editors are usually rendered last,
+      // and this tends to match "the one you just opened".
+      const chosen = mainComment || textareas[textareas.length - 1];
+
+      setActiveTextarea(chosen);
+      updateStatus(`Default: ${getTextareaName(chosen)}`);
+      debug("Default textarea:", getTextareaName(chosen));
     } else {
-      state.activeTextarea = null;
+      setActiveTextarea(null);
       updateStatus("No comment fields found");
       debug("No comment fields found");
     }
@@ -549,6 +618,7 @@ export function updateActiveTextarea() {
   state.activeDecorations.clear();
   resetDecorationButtons();
 }
+
 
 /**
  * Get a readable name for a textarea
@@ -572,10 +642,12 @@ function getTextareaName(textarea) {
  */
 export function setupTextareaListeners() {
   document.addEventListener("focusin", (e) => {
-    if (e.target.tagName === "TEXTAREA") {
-      if (state.activeTextarea !== e.target) {
-        state.activeTextarea = e.target;
-        updateStatus(`Active: ${getTextareaName(e.target)}`);
+    const target = e.target;
+
+    if (isGithubCommentTextarea(target)) {
+      if (state.activeTextarea !== target) {
+        setActiveTextarea(target);
+        updateStatus(`Active: ${getTextareaName(target)}`);
 
         // Clear active decorations
         state.activeDecorations.clear();
@@ -584,6 +656,7 @@ export function setupTextareaListeners() {
     }
   });
 }
+
 
 /**
  * Setup keyboard shortcut to toggle panel

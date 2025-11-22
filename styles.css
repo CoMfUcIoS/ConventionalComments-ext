@@ -209,6 +209,14 @@
   text-decoration: none;
 }
 
+/* Tiny visual indicator for the active GitHub comment textarea */
+.cc-active-textarea {
+  outline: 2px solid rgba(88, 166, 255, 0.7); /* GitHub-ish blue */
+  outline-offset: 1px;
+  transition: outline-color 0.15s ease-out;
+}
+
+
 #cc-help-dialog a:hover {
   text-decoration: underline;
 }
