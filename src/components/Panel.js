@@ -1,8 +1,8 @@
 import { debug } from "../utils/debug";
 import state from "../state";
 import {
-  LABELS,
-  DECORATIONS,
+  DEFAULT_LABELS,
+  DEFAULT_DECORATIONS,
   LABEL_INFO,
   DECORATION_INFO,
 } from "../utils/constants";
@@ -118,7 +118,7 @@ export function createPanel() {
   labelsContainer.id = "cc-labels-container";
 
   // Add labels section with button event listeners
-  const labelsToUse = state.customLabels || LABELS;
+  const labelsToUse = state.customLabels || DEFAULT_LABELS;
   labelsToUse.forEach((label) => {
     const button = document.createElement("button");
     button.textContent = label;
@@ -157,7 +157,7 @@ export function createPanel() {
   decorationsContainer.classList.add("cc-button-container");
   decorationsContainer.id = "cc-decorations-container";
 
-  const decorationsToUse = state.customDecorations || DECORATIONS;
+  const decorationsToUse = state.customDecorations || DEFAULT_DECORATIONS;
   decorationsToUse.forEach((decoration) => {
     const button = document.createElement("button");
     button.textContent = decoration;

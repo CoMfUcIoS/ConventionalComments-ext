@@ -2,32 +2,30 @@
 ├── .gitignore
 ├── README.md
 ├── color-variables.css
+├── custom-labels.css
 ├── folderStructure.txt
+├── help-dialog.css
 ├── icons
-│   ├── .gitkeep
-│   └── icon-48.png
+│   └── .gitkeep
 ├── manifest.json
-├── package-lock.json
 ├── package.json
-├── src
-│   ├── components
-│   │   ├── .gitkeep
-│   │   ├── Button.js
-│   │   ├── HelpDialog.js
-│   │   ├── Panel.js
-│   │   └── ThemeSwitcher.js
-│   ├── content.js
-│   ├── index.js
-│   ├── state.js
-│   └── utils
-│       ├── .gitkeep
-│       ├── constants.js
-│       ├── debug.js
-│       ├── draggable.js
-│       ├── interactions.js
-│       ├── storage.js
-│       └── theme.js
 ├── styles.css
-└── webpack.config.js
+├── webpack.config.js
+└── src
+    ├── components
+    │   ├── Button.js
+    │   ├── CustomLabelsManager.js
+    │   ├── HelpDialog.js
+    │   ├── Panel.js
+    │   └── ThemeSwitcher.js
+    ├── content.js
+    ├── index.js
+    ├── state.js
+    └── utils
+        ├── constants.js
+        ├── debug.js
+        ├── highlight.js
+        ├── interactions.js
+        ├── storage.js
+        └── theme.js
 
-5 directories, 26 files

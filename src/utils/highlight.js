@@ -1,12 +1,22 @@
 import { debug } from "./debug";
 import state from "../state";
-import { DEFAULT_LABELS } from "./constants";
+import { DEFAULT_LABELS, DEFAULT_DECORATIONS } from "./constants";
 
 const ESCAPE_REGEX = /[.*+?^${}()|[\]\\]/g;
 
 function escapeRegExp(str) {
   return str.replace(ESCAPE_REGEX, "\\$&");
 }
+
+// Pre-normalized lists of default labels/decorations so we can
+// tell whether something is "known" or should use the default style.
+const NORMALIZED_DEFAULT_LABELS = DEFAULT_LABELS.map((label) =>
+  label.toLowerCase(),
+);
+
+const NORMALIZED_DEFAULT_DECORATIONS = DEFAULT_DECORATIONS.map((decoration) =>
+  decoration.toLowerCase().replace(/\s+/g, "-"),
+);
 
 function highlightConventionalComments(elements) {
   const labels = [...DEFAULT_LABELS, ...(state.customLabels || [])];
@@ -37,8 +47,13 @@ function highlightConventionalComments(elements) {
     debug("Rest of comment", restOfComment);
 
     // Determine CSS class for the label
-    const labelClass =
-      `cc-highlight-${label.toLowerCase()}` || "cc-highlight-default";
+    const normalizedLabel = label.toLowerCase();
+    const isDefaultLabel =
+      NORMALIZED_DEFAULT_LABELS.indexOf(normalizedLabel) !== -1;
+
+    const labelClass = isDefaultLabel
+      ? `cc-highlight-${normalizedLabel}`
+      : "cc-highlight-default";
 
     // Split decorations on commas and normalize them
     const decorations = decorationRaw
@@ -63,8 +78,12 @@ function highlightConventionalComments(elements) {
           .toLowerCase()
           .replace(/\s+/g, "-");
 
-        const decorationClass =
-          `cc-highlight-${normalizedDecoration}` || "cc-highlight-default";
+        const isDefaultDecoration =
+          NORMALIZED_DEFAULT_DECORATIONS.indexOf(normalizedDecoration) !== -1;
+
+        const decorationClass = isDefaultDecoration
+          ? `cc-highlight-${normalizedDecoration}`
+          : "cc-highlight-default";
 
         if (index > 0) {
           fragment.appendChild(document.createTextNode(" "));
