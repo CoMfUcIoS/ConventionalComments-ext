@@ -18,8 +18,11 @@ import { DEFAULT_LABELS, DEFAULT_DECORATIONS } from "./utils/constants";
 import state from "./state";
 import { initializeHighlighting } from "./utils/highlight";
 
-// Make state accessible for debugging
-window.conventionalCommentsState = state;
+// Make state accessible for debugging in non-production builds
+if (typeof DEBUG !== "undefined" && DEBUG) {
+  // Expose under a namespaced key to avoid collisions
+  window.conventionalCommentsState = state;
+}
 
 // Initialize the extension
 function init() {

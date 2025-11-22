@@ -20,12 +20,23 @@ const NORMALIZED_DEFAULT_DECORATIONS = DEFAULT_DECORATIONS.map((decoration) =>
 
 function highlightConventionalComments(elements) {
   const labels = [...DEFAULT_LABELS, ...(state.customLabels || [])];
-  const escapedLabels = labels.map((label) => escapeRegExp(label));
+
+  // Deduplicate labels to keep the regex smaller and avoid redundant matches
+  const uniqueLabels = Array.from(new Set(labels));
+
+  // If for some reason we end up with no labels, bail out early
+  if (uniqueLabels.length === 0) {
+    debug("No labels configured, skipping highlight");
+    return;
+  }
+
+  const escapedLabels = uniqueLabels.map((label) => escapeRegExp(label));
 
   const commentRegex = new RegExp(
     `(${escapedLabels.join("|")})(\\s*\\(([^)]*)\\))?:\\s*(.*)`,
     "is",
   );
+
 
   elements.forEach((comment) => {
     // Normalize the comment text by trimming leading/trailing whitespace

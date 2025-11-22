@@ -6,12 +6,9 @@ import { loadThemePreference, saveThemePreference } from "./storage";
  * @returns {string} The current theme ID
  */
 export function getCurrentTheme() {
-  if (typeof chrome !== "undefined" && chrome.storage) {
-    const savedTheme = localStorage.getItem("cc-theme");
-    if (savedTheme) return savedTheme;
-  }
-
-  return "system"; // Default to system theme
+  const savedTheme = localStorage.getItem("cc-theme");
+  // Fallback to system if nothing saved yet
+  return savedTheme || "system";
 }
 
 /**

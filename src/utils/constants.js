@@ -15,11 +15,11 @@ export const DEFAULT_LABELS = [
 export const DEFAULT_DECORATIONS = [
   "non-blocking",
   "blocking",
-  "if-minor",
-  "ux",
+  "typo",
   "security",
   "test",
 ];
+
 
 // Label descriptions for tooltips
 export const LABEL_INFO = {

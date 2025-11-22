@@ -461,7 +461,7 @@ export function toggleDecoration(decoration, button) {
   const currentValue = textarea.value;
 
   // Find existing label pattern at the beginning of the line
-  const labelMatch = currentValue.match(/^(\w+)(\s*\([^)]*\))?:/);
+  const labelMatch = currentValue.match(/^([^\s:(]+)(\s*\([^)]*\))?:/);
   if (!labelMatch) {
     debug("No label found in textarea");
     updateStatus("First select a label before adding decorations");
@@ -477,7 +477,7 @@ export function toggleDecoration(decoration, button) {
       : `${label}:`;
 
   // Replace just the label and decoration part
-  textarea.value = currentValue.replace(/^(\w+)(\s*\([^)]*\))?:/, newText);
+  textarea.value = currentValue.replace(/^([^\s:(]+)(\s*\([^)]*\))?:/, newText);
   textarea.focus();
 
   // Trigger input event
