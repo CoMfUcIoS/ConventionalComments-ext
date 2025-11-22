@@ -37,7 +37,9 @@ function isGithubCommentTextarea(textarea) {
   }
 
   const ariaLabel = (textarea.getAttribute("aria-label") || "").toLowerCase();
-  const placeholder = (textarea.getAttribute("placeholder") || "").toLowerCase();
+  const placeholder = (
+    textarea.getAttribute("placeholder") || ""
+  ).toLowerCase();
 
   // New React-based comment editors in PRs:
   // they currently use aria-label="Markdown value" and a friendly placeholder.
@@ -74,7 +76,6 @@ function setActiveTextarea(next) {
     state.activeTextarea.classList.add(ACTIVE_TEXTAREA_CLASS);
   }
 }
-
 
 /**
  * Create and inject the floating panel
@@ -461,12 +462,21 @@ export function toggleExpand(e) {
 export function insertLabel(label) {
   debug(`Inserting label: ${label}`);
 
-  if (!state.activeTextarea) {
+  // Prefer the textarea that is visually marked as active
+  let textarea =
+    document.querySelector(`textarea.${ACTIVE_TEXTAREA_CLASS}`) ||
+    state.activeTextarea;
+
+  if (textarea && textarea !== state.activeTextarea) {
+    setActiveTextarea(textarea);
+  }
+
+  if (!textarea) {
     debug("No active textarea, can't insert label");
+    updateStatus("Click in a GitHub comment box first");
     return;
   }
 
-  const textarea = state.activeTextarea;
   const currentValue = textarea.value;
   const selectionStart = textarea.selectionStart;
   const selectionEnd = textarea.selectionEnd;
@@ -500,8 +510,18 @@ export function insertLabel(label) {
 export function toggleDecoration(decoration, button) {
   debug(`Toggling decoration: ${decoration}`);
 
-  if (!state.activeTextarea) {
+  // Prefer the textarea that is visually marked as active
+  let textarea =
+    document.querySelector(`textarea.${ACTIVE_TEXTAREA_CLASS}`) ||
+    state.activeTextarea;
+
+  if (textarea && textarea !== state.activeTextarea) {
+    setActiveTextarea(textarea);
+  }
+
+  if (!textarea) {
     debug("No active textarea, can't toggle decoration");
+    updateStatus("Click in a GitHub comment box first");
     return;
   }
 
@@ -517,7 +537,6 @@ export function toggleDecoration(decoration, button) {
   }
 
   // Update textarea
-  const textarea = state.activeTextarea;
   const currentValue = textarea.value;
 
   // Find existing label pattern at the beginning of the line
@@ -592,9 +611,9 @@ export function updateActiveTextarea() {
     );
   } else {
     // Find all visible GitHub comment textareas (classic + React UI)
-    const textareas = Array.from(
-      document.querySelectorAll("textarea"),
-    ).filter((ta) => isGithubCommentTextarea(ta));
+    const textareas = Array.from(document.querySelectorAll("textarea")).filter(
+      (ta) => isGithubCommentTextarea(ta),
+    );
 
     if (textareas.length > 0) {
       // Prefer the main PR comment field if available (classic layout)
@@ -618,7 +637,6 @@ export function updateActiveTextarea() {
   state.activeDecorations.clear();
   resetDecorationButtons();
 }
-
 
 /**
  * Get a readable name for a textarea
@@ -644,19 +662,20 @@ export function setupTextareaListeners() {
   document.addEventListener("focusin", (e) => {
     const target = e.target;
 
-    if (isGithubCommentTextarea(target)) {
+    // Treat any focused TEXTAREA as the active one.
+    // This avoids subtle mis-detections with the new React UI clones.
+    if (target && target.tagName === "TEXTAREA") {
       if (state.activeTextarea !== target) {
         setActiveTextarea(target);
         updateStatus(`Active: ${getTextareaName(target)}`);
 
-        // Clear active decorations
+        // Clear active decorations when switching fields
         state.activeDecorations.clear();
         resetDecorationButtons();
       }
     }
   });
 }
-
 
 /**
  * Setup keyboard shortcut to toggle panel
