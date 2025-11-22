@@ -499,6 +499,8 @@ export function insertLabel(label) {
   const inputEvent = new Event("input", { bubbles: true });
   textarea.dispatchEvent(inputEvent);
 
+  syncPanelWithTextarea(textarea);
+
   debug(`Label inserted: ${label}`);
 }
 
@@ -563,6 +565,8 @@ export function toggleDecoration(decoration, button) {
   const inputEvent = new Event("input", { bubbles: true });
   textarea.dispatchEvent(inputEvent);
 
+  syncPanelWithTextarea(textarea);
+
   debug(`Decoration toggled: ${decoration}, active: ${!isActive}`);
   debug(
     `Current decorations: ${Array.from(state.activeDecorations).join(", ")}`,
@@ -578,6 +582,76 @@ export function resetDecorationButtons() {
   const buttons = state.panel.querySelectorAll(".cc-decoration-btn");
   buttons.forEach((button) => {
     button.classList.remove("active");
+  });
+}
+
+function resetLabelButtons() {
+  if (!state.panel) return;
+
+  const buttons = state.panel.querySelectorAll(".cc-label-btn");
+  buttons.forEach((button) => {
+    button.classList.remove("active");
+  });
+}
+
+function findLabelButton(label) {
+  if (!state.panel || !label) return null;
+  const target = label.toLowerCase();
+
+  return Array.from(state.panel.querySelectorAll(".cc-label-btn")).find(
+    (btn) => (btn.dataset.label || btn.textContent || "").toLowerCase() === target,
+  );
+}
+
+function findDecorationButton(decoration) {
+  if (!state.panel || !decoration) return null;
+  const target = decoration.toLowerCase();
+
+  return Array.from(
+    state.panel.querySelectorAll(".cc-decoration-btn"),
+  ).find(
+    (btn) =>
+      (btn.dataset.decoration || btn.textContent || "").toLowerCase() ===
+      target,
+  );
+}
+
+/**
+ * Sync panel buttons with the content of the active textarea.
+ * Detects label + decorations at the start of the textarea and updates button state.
+ */
+function syncPanelWithTextarea(textarea) {
+  // Clear existing button states
+  resetLabelButtons();
+  state.activeDecorations.clear();
+  resetDecorationButtons();
+
+  if (!textarea) return;
+
+  const raw = (textarea.value || textarea.textContent || "").trim();
+  const match = /^([^\s:(]+)\s*(\(([^)]*)\))?:/i.exec(raw);
+
+  if (!match) return;
+
+  const label = match[1];
+  const decorationsRaw = match[3] || "";
+
+  const labelButton = findLabelButton(label);
+  if (labelButton) {
+    labelButton.classList.add("active");
+  }
+
+  const decorations = decorationsRaw
+    .split(",")
+    .map((d) => d.trim())
+    .filter(Boolean);
+
+  decorations.forEach((decoration) => {
+    const button = findDecorationButton(decoration);
+    if (button) {
+      state.activeDecorations.add(button.dataset.decoration || decoration);
+      button.classList.add("active");
+    }
   });
 }
 
@@ -601,10 +675,12 @@ export function updateActiveTextarea() {
     // Currently focused comment textarea
     setActiveTextarea(activeElement);
     updateStatus(`Active: ${getTextareaName(activeElement)}`);
+    syncPanelWithTextarea(activeElement);
     debug("Active textarea:", getTextareaName(activeElement));
   } else if (isGithubCommentTextarea(state.activeTextarea)) {
     // No new focus, but we still have a valid textarea from before
     updateStatus(`Active: ${getTextareaName(state.activeTextarea)}`);
+    syncPanelWithTextarea(state.activeTextarea);
     debug(
       "Using existing active textarea:",
       getTextareaName(state.activeTextarea),
@@ -625,10 +701,12 @@ export function updateActiveTextarea() {
 
       setActiveTextarea(chosen);
       updateStatus(`Default: ${getTextareaName(chosen)}`);
+      syncPanelWithTextarea(chosen);
       debug("Default textarea:", getTextareaName(chosen));
     } else {
       setActiveTextarea(null);
       updateStatus("No comment fields found");
+      syncPanelWithTextarea(null);
       debug("No comment fields found");
     }
   }
@@ -659,22 +737,45 @@ function getTextareaName(textarea) {
  * Setup listener for textareas getting focus
  */
 export function setupTextareaListeners() {
-  document.addEventListener("focusin", (e) => {
-    const target = e.target;
+  function handlePotentialTextarea(target) {
+    const textarea =
+      target && target.tagName === "TEXTAREA"
+        ? target
+        : target.closest && target.closest("textarea");
 
-    // Treat any focused TEXTAREA as the active one.
-    // This avoids subtle mis-detections with the new React UI clones.
-    if (target && target.tagName === "TEXTAREA") {
-      if (state.activeTextarea !== target) {
-        setActiveTextarea(target);
-        updateStatus(`Active: ${getTextareaName(target)}`);
-
-        // Clear active decorations when switching fields
-        state.activeDecorations.clear();
-        resetDecorationButtons();
-      }
+    if (!isGithubCommentTextarea(textarea)) {
+      return;
     }
-  });
+
+    if (state.activeTextarea !== textarea) {
+      setActiveTextarea(textarea);
+      updateStatus(`Active: ${getTextareaName(textarea)}`);
+
+      // Clear active decorations when switching fields
+      state.activeDecorations.clear();
+      resetDecorationButtons();
+    }
+  }
+
+  // Capture focus changes coming from keyboard/tabbing or programmatic focus
+  document.addEventListener(
+    "focusin",
+    (e) => {
+      handlePotentialTextarea(e.target);
+      syncPanelWithTextarea(state.activeTextarea);
+    },
+    true,
+  );
+
+  // Also listen for pointer interactions in case focus events are suppressed
+  document.addEventListener(
+    "pointerdown",
+    (e) => {
+      handlePotentialTextarea(e.target);
+      syncPanelWithTextarea(state.activeTextarea);
+    },
+    true,
+  );
 }
 
 /**

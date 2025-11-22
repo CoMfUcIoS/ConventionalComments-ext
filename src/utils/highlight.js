@@ -18,6 +18,23 @@ const NORMALIZED_DEFAULT_DECORATIONS = DEFAULT_DECORATIONS.map((decoration) =>
   decoration.toLowerCase().replace(/\s+/g, "-"),
 );
 
+const COMMENT_BODY_SELECTOR = [
+  ".comment-body",
+  ".js-comment-body",
+  ".review-comment-body",
+  ".review-comment-contents .comment-body",
+  "[class*='ReviewThreadComment-module__SafeHTMLBox']",
+  "[class*='ReviewThreadComment-module__BodyHTMLContainer'] .markdown-body",
+  "[class*='ReviewThreadComment-module__ReviewThreadContainer'] .markdown-body",
+  ".markdown-body[data-testid='comment-body']",
+  "[data-testid='comment-body']",
+  "[data-testid='review-thread-comment-body']",
+  "[data-testid*='comment-body']",
+  ".markdown-body.js-comment-body",
+  ".js-inline-comments-container .markdown-body",
+  ".js-inline-comments-container .comment-body",
+].join(",");
+
 function highlightConventionalComments(elements) {
   const labels = [...DEFAULT_LABELS, ...(state.customLabels || [])];
 
@@ -39,6 +56,11 @@ function highlightConventionalComments(elements) {
 
 
   elements.forEach((comment) => {
+    // Skip nodes that are not actual comment bodies (e.g., README previews)
+    if (!comment.matches(COMMENT_BODY_SELECTOR)) {
+      return;
+    }
+
     // Normalize the comment text by trimming leading/trailing whitespace
     const trimmedText = comment.textContent.trim();
     const match = commentRegex.exec(trimmedText);
@@ -126,10 +148,10 @@ function observeDOMChanges() {
       if (mutation.type === "childList") {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
-            if (node.matches(".comment-body")) {
+            if (node.matches(COMMENT_BODY_SELECTOR)) {
               commentElements.add(node);
             } else {
-              node.querySelectorAll(".comment-body").forEach((child) => {
+              node.querySelectorAll(COMMENT_BODY_SELECTOR).forEach((child) => {
                 commentElements.add(child);
               });
             }
@@ -148,6 +170,8 @@ function observeDOMChanges() {
 
 export function initializeHighlighting() {
   debug("Initializing highlighting feature");
-  highlightConventionalComments(document.querySelectorAll(".comment-body"));
+  highlightConventionalComments(
+    document.querySelectorAll(COMMENT_BODY_SELECTOR),
+  );
   observeDOMChanges();
 }

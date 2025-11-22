@@ -355,6 +355,15 @@
   font-weight: 600 !important;
 }
 
+.cc-label-btn.active {
+  background-color: var(--cc-decoration-active-bg);
+  color: var(--cc-decoration-active-text);
+  border-color: var(--cc-decoration-active-bg);
+  font-weight: 650;
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--cc-decoration-active-bg), transparent 70%);
+}
+
 /* Decoration button active state - ensure high contrast */
 .cc-decoration-btn.active {
   background-color: var(--cc-decoration-active-bg) !important;
@@ -1064,83 +1073,109 @@ html[data-theme="dark"]
 }
 
 /* Predefined label styles */
+.cc-highlight-default,
+.cc-highlight-praise,
+.cc-highlight-nitpick,
+.cc-highlight-suggestion,
+.cc-highlight-issue,
+.cc-highlight-todo,
+.cc-highlight-question,
+.cc-highlight-thought,
+.cc-highlight-chore,
+.cc-highlight-note,
+.cc-highlight-non-blocking,
+.cc-highlight-blocking,
+.cc-highlight-if-minor,
+.cc-highlight-ux,
+.cc-highlight-security,
+.cc-highlight-test {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 650;
+  line-height: 1.4;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 .cc-highlight-praise {
-  background-color: #e0f7fa;
-  color: #00796b; 
+  background-color: #d9f1ed;
+  color: #00564a;
 }
 
 .cc-highlight-nitpick {
-  background-color: #fff3e0;
-  color: #e65100; 
+  background-color: #fff0d9;
+  color: #8c4b00;
 }
 
 .cc-highlight-suggestion {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+  background-color: #e3f4e8;
+  color: #145c2c;
 }
 
 .cc-highlight-issue {
-  background-color: #ffebee;
-  color: #b71c1c; 
+  background-color: #fbe4e4;
+  color: #9e1c1c;
 }
 
 .cc-highlight-todo {
-  background-color: #ede7f6; 
-  color: #5e35b1;
+  background-color: #e9e2f7;
+  color: #4a2c8f;
 }
 
 .cc-highlight-question {
-  background-color: #e3f2fd; 
-  color: #1565c0; 
+  background-color: #e3ecff;
+  color: #0b3d91;
 }
 
 .cc-highlight-thought {
-  background-color: #f3e5f5;
-  color: #6a1b9a; 
+  background-color: #f4e7f6;
+  color: #5c1d7c;
 }
 
 .cc-highlight-chore {
-  background-color: #fbe9e7;
-  color: #d84315; 
+  background-color: #fff5dd;
+  color: #7a4a1b;
 }
 
 .cc-highlight-note {
-  background-color: #f9fbe7;
-  color: #827717; 
+  background-color: #e6f2ff;
+  color: #0d3d91;
+}
 
 /* Predefined decorator styles */
 .cc-highlight-non-blocking {
-  background-color: #e8f5e9;
-  color: #2e7d32; 
+  background-color: #e4f3e8;
+  color: #1c5f2e;
 }
 
 .cc-highlight-blocking {
-  background-color: #ffebee;
-  color: #b71c1c; 
+  background-color: #fbe0e0;
+  color: #9e1c1c;
 }
 
 .cc-highlight-if-minor {
-  background-color: #ede7f6;
-  color: #5e35b1; 
+  background-color: #ece3f7;
+  color: #4a2c8f;
 }
 
 .cc-highlight-ux {
-  background-color: #e3f2fd;
-  color: #1565c0; 
+  background-color: #e6f0ff;
+  color: #0b3d91;
 }
 
 .cc-highlight-security {
-  background-color: #ffebee; 
-  color: #b71c1c; 
+  background-color: #fbe0e0;
+  color: #8b1b1b;
 }
 
 .cc-highlight-test {
-  background-color: #ede7f6; 
-  color: #5e35b1;
+  background-color: #e9e2f7;
+  color: #3c2a8d;
 }
 
 /* Default styles for user-defined labels and decorators */
 .cc-highlight-default {
-  background-color: #f5f5f5;
-  color: #212121; 
+  background-color: #eef1f5;
+  color: #1f2933;
 }
