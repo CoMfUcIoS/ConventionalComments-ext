@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/CoMfUcIoS/ConventionalComments-ext/compare/v2.2.0...v2.3.0) (2025-12-14)
+
+
+### Features
+
+* add non-destructive DOM highlighting & tests ([6d7e594](https://github.com/CoMfUcIoS/ConventionalComments-ext/commit/6d7e5941e8575d23a03b51fef2a11e91c1411533))
+
 ## [2.2.0](https://github.com/CoMfUcIoS/ConventionalComments-ext/compare/v2.1.0...v2.2.0) (2025-11-22)
 
 
